@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'head.html' %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <header class="page-header">
+        <nav class="nav-container">
+            <input type="checkbox" id="menu-toggle">
+
+            <div class="brand-group">
+                <label for="menu-toggle" class="menu-icon">
+                    <img src="/assets/avatar.png" class="avatar" alt="Menu">
+                </label>
+                <a href="/" class="brand-name">Kevin M Henderson</a>
+            </div>
+
+            <div class="menu">
+                <a href="/about">About</a>
+                <a href="/cv">CV</a>
+                <a href="/timelapses">Timelapses</a>
+                <a href="/favourites">Favourites</a>
+                <a href="/notes">Thoughts</a>
+                <a href="/game/">Game</a>
+            </div>
+
+            <div class="nav-socials">
+            <a href="https://keys.openpgp.org/vks/v1/by-fingerprint/A9607F121BEBFCCAE8E821EBF1D7400B08418266"><img class="social-icon" src="/assets/icons/gnuprivacyguard.svg"></a>
+            <a href="mailto:umhendek@gmail.com"><img class="social-icon" src="/assets/icons/gmail.svg"></a>
+            <a href="https://github.com/niveknosredneh"><img class="social-icon" src="/assets/icons/github.svg"></a>
+            <a href="https://www.youtube.com/kevinhenderson"><img class="social-icon" src="/assets/icons/youtube.svg"></a>
+            <a href="https://www.instagram.com/heavenkenderson"><img class="social-icon" src="/assets/icons/instagram.svg"></a>
+            <a href="https://www.facebook.com/heaven.kenderson.2025"><img class="social-icon" src="/assets/icons/facebook.svg"></a>
+            <a href="https://www.linkedin.com/in/kevin-henderson-9354a0a6/"><img class="social-icon" src="/assets/icons/linkedin.png"></a>
+            <a href="https://steamcommunity.com/profiles/76561198047742285/"><img class="social-icon" src="/assets/icons/steam.svg"></a>
+            <a href="https://retroachievements.org/user/turbomoses420"><img class="social-icon" src="/assets/icons/retroachievements.svg"></a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {{content}}
+    </main>
+
+    <footer class="page-footer">
+        <small>Copyright {{site.author}} &copy; 2026</small>
+    </footer>
+
+</body>
+</html>

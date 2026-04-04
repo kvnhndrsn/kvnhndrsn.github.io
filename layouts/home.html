@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    {% include 'head.html' %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/style.css">
+    <style>
+:root {
+    /* We add !important here to ensure these variables aren't
+       hijacked by any remaining theme scripts in your head.html */
+    --bg-color: #000 !important;
+    --bg-image: url("/assets/wallpapers/back2-dark.png") !important;
+    --text-color: #fff !important;
+    --accent-color: #555 !important;
+    --border-color: #222 !important;
+}
+
+/* Apply to both html and body to ensure no 'white flash' or bypass */
+html, body {
+    background-color: #000 !important; /* Hardcoded fallback */
+    background-color: var(--bg-color) !important;
+    background-image: var(--bg-image) !important;
+    background-attachment: fixed !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: row;
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+
+        .main-menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 5vw;
+            width: 70%;
+            height: 100%;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: baseline;
+            gap: 20px;
+        }
+
+.main-menu a {
+    font-size: clamp(2rem, 8vw, 5rem);
+    font-weight: 800;
+    text-decoration: none;
+    color: var(--text-color);
+    text-transform: uppercase;
+    line-height: 1.5;
+
+    /* This creates the "slow" feel */
+    transition: opacity 0.7s ease;
+    opacity: 1;
+}
+
+.main-menu a:hover {
+    /* Fades to 50% */
+    opacity: 0.35;
+    /* Optional: ensures the color doesn't jump if you had a color hover set */
+    color: var(--text-color);
+}
+
+        .social-sidebar {
+            width: 30%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            padding-right: 5vw;
+            gap: 3rem;
+            border-left: none;
+        }
+
+        .icon-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.6rem;
+        }
+
+        .group-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #aaa;
+        }
+
+        .icon-row {
+            display: neocities blogflex;
+            gap: clamp(2.2rem, 4vw, 2.8rem);
+        }
+
+        /* Responsive Icon Sizing */
+        .social-icon {
+            width: clamp(29px, 3vw + 10px, 38px);
+            height: clamp(29px, 3vw + 10px, 38px);
+            filter: invert(1);
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            margin-right: 0.6rem;
+
+        }
+
+        .social-icon:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow: auto; }
+            .main-menu { width: 100%; padding: 40px; justify-content: flex-start; height: auto; margin-top: 10vh; }
+            .social-sidebar { width: 100%; align-items: flex-start; padding: 40px; border-left: none; border-top: none; }
+            .icon-group { align-items: flex-start; margin-left: 0.4rem;}
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav class="main-menu">
+        {{ content }}
+    </nav>
+
+    <aside class="social-sidebar">
+        <div class="icon-group">
+            <span class="group-label">Contact</span>
+            <div class="icon-row">
+                <a href="mailto:umhendek@gmail.com"><img class="social-icon" src="/assets/icons/gmail.svg"></a>
+                <a href="tel:13065024835"><img class="social-icon" src="/assets/icons/phone.svg"></a>
+                <a href="https://discord.com/users/664500374983540756"><img class="social-icon" src="/assets/icons/discord.svg"></a>
+
+            </div>
+        </div>
+
+        <div class="icon-group">
+            <span class="group-label">Socials</span>
+            <div class="icon-row">
+                <a href="https://www.youtube.com/kevinhenderson"><img class="social-icon" src="/assets/icons/youtube.svg"></a>
+                <a href="https://www.instagram.com/heavenkenderson"><img class="social-icon" src="/assets/icons/instagram.svg"></a>
+                <a href="https://www.facebook.com/heaven.kenderson.2025"><img class="social-icon" src="/assets/icons/facebook.svg"></a>
+                <a href="https://www.linkedin.com/in/kevin-henderson-9354a0a6/"><img class="social-icon" src="/assets/icons/linkedin.svg"></a>
+            </div>
+        </div>
+
+        <div class="icon-group">
+            <span class="group-label">Code</span>
+            <div class="icon-row">
+                <a href="https://github.com/niveknosredneh"><img class="social-icon" src="/assets/icons/github.svg"></a>
+                <a href="https://codeberg.org/kvnhndrsn"><img class="social-icon" src="/assets/icons/codeberg.svg"></a>
+            </div>
+        </div>
+
+
+        <div class="icon-group">
+            <span class="group-label">Gaming</span>
+            <div class="icon-row">
+                <a href="https://steamcommunity.com/profiles/76561198047742285/"><img class="social-icon" src="/assets/icons/steam.svg"></a>
+                <a href="https://retroachievements.org/user/turbomoses420"><img class="social-icon" src="/assets/icons/retroachievements.svg"></a>
+            </div>
+        </div>
+
+
+
+
+    </aside>
+
+</body>
+</html>

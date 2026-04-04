@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en"> <head>
+    {% include 'head.html' %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    /* We add !important here to ensure these variables aren't
+       hijacked by any remaining theme scripts in your head.html */
+    --bg-color: #000 !important;
+    --bg-image: url("/assets/wallpapers/back2-dark.png") !important;
+    --text-color: #fff !important;
+    --accent-color: #555 !important;
+    --border-color: #222 !important;
+}
+
+/* Apply to both html and body to ensure no 'white flash' or bypass */
+html, body {
+    background-color: #000 !important; /* Hardcoded fallback */
+    background-color: var(--bg-color) !important;
+    background-image: var(--bg-image) !important;
+    background-attachment: fixed !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+body {
+    color: var(--text-color);
+    margin: 0;
+    font-family: sans-serif;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+        /* Simplified Header (Matches Landing Page Style) */
+        .site-header {
+            position: sticky; top: 0; z-index: 1000;
+            padding: 0.4rem 3vw;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(8px);
+
+        }
+
+        .site-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.9rem;
+
+        }
+
+        .site-nav a {
+            font-size: 1.2rem;
+            font-weight: 800;
+            text-decoration: none;
+            color: var(--text-color);
+            text-transform: uppercase;
+            transition: opacity 0.5s ease;
+        }
+
+        .site-nav a:hover {
+            opacity: 0.5;
+        }
+
+        /* Content Area */
+        main {
+            flex: 1;
+            padding: 1rem 5vw;
+            max-width: 900px; /* Keeps text readable on large screens */
+            width: 100%;
+            margin: 0 auto; /* Centers the content column */
+        }
+
+        h1, h2, h3 {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+        }
+
+        /* Sidebar/Footer Socials (Mobile First) */
+        .content-footer {
+            padding: 0.3rem 1vw;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: row;
+            gap: 0.2rem;
+            justify-content: space-between;
+        }
+
+        .social-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;claude codeneocities blog
+        }
+
+        .social-icon {
+            width: clamp(18px, 2vw + 8px, 28px);
+            height: 24px;
+            filter: invert(1);
+            opacity: 0.4;
+            transition: opacity 0.3s;
+        }
+
+        .social-icon:hover { opacity: 1; }
+
+        /* Desktop Adjustments */
+        @media (min-width: 1024px) {
+            .site-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: baseline;
+                padding: 1rem 3vw;
+            }
+            .site-nav { gap: 0.9rem; }
+            .site-nav a { font-size: 1.5rem; }
+            main { padding: 4rem 0; }
+            .content-footer { padding: 1rem 3vw; flex-direction: row; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+
+        <nav class="site-nav">
+            <a href="/">Home</a>
+            <a href="/projects">Projects</a>
+            <a href="/timelapses">Timelapse</a>
+            <a href="/more/">More</a>
+        </nav>
+    </header>
+
+    <main>
+        {{ content }}
+    </main>
+
+    <footer class="content-footer">
+        <div class="social-row">
+            <a href="mailto:umhendek@gmail.com"><img class="social-icon" src="/assets/icons/gmail.svg"></a>
+            <a href="tel:13065024835"><img class="social-icon" src="/assets/icons/phone.svg"></a>
+            <a href="https://discord.com/users/664500374983540756"><img class="social-icon" src="/assets/icons/discord.svg"></a>
+        </div>
+        <div class="social-row">
+            <a href="https://www.youtube.com/kevinhenderson"><img class="social-icon" src="/assets/icons/youtube.svg"></a>
+            <a href="https://www.instagram.com/heavenkenderson"><img class="social-icon" src="/assets/icons/instagram.svg"></a>
+            <a href="https://www.facebook.com/heaven.kenderson.2025"><img class="social-icon" src="/assets/icons/facebook.svg"></a>
+            <a href="https://www.linkedin.com/in/kevin-henderson-9354a0a6/"><img class="social-icon" src="/assets/icons/linkedin.svg"></a>
+        </div>
+        <div class="social-row">
+            <a href="https://github.com/niveknosredneh"><img class="social-icon" src="/assets/icons/github.svg"></a>
+            <a href="https://codeberg.org/kvnhndrsn"><img class="social-icon" src="/assets/icons/codeberg.svg"></a>
+        </div>
+        <div class="social-row">
+            <a href="https://steamcommunity.com/profiles/76561198047742285/"><img class="social-icon" src="/assets/icons/steam.svg"></a>
+            <a href="https://retroachievements.org/user/turbomoses420"><img class="social-icon" src="/assets/icons/retroachievements.svg"></a>
+        </div>
+
+        <small style="opacity: 0.8;">
+        <a style="opacity: 0.8;font-size: 1.1em; font-weight: 1000; color: #ddd; text-decoration: none;"
+        href="/about">{{ site.author }} 2026 </a>
+        </small>
+    </footer>
+
+    </body>
+</html>
