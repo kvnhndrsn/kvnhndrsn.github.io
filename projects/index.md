@@ -112,10 +112,11 @@ title: Projects
 
   <div class="project-row">
     <div class="project-info">
-      <h3 class="project-title"><a href="/projects/pdf.html">PDF Search</a></h3>
+      <h3 class="project-title"><a href="https://codeberg.org/kvnhndrsn/pdf_scan_JS">PDF Search</a></h3>
       <p class="programming-name"><strong><b> Javascript, PDFjs, JSZip<b></strong></p>
       <p>Scans a zip or folder of PDFs for a large list of keywords and jump between matches.  </p>
       <p>I vibe coded this to be a more versatile version of the python tool below</p>
+      <a href="/projects/pdf.html">DEMO</a>
       <p class="programming-name"><strong>Last Updated:</strong> 2026</p>
     </div>
     <div class="project-image">
@@ -125,7 +126,7 @@ title: Projects
   
   <div class="project-row">
     <div class="project-info">
-      <h3 class="project-title"><a href="/projects/pdf_scan5.py">PDF Keyword Highlighter</a></h3>
+      <h3 class="project-title"><a href="https://codeberg.org/kvnhndrsn/pdf_scan">PDF Keyword Highlighter</a></h3>
       <p class="programming-name"><strong><b> Python, PyMuPDF<b></strong></p>
       <p>Scans a folder of PDFs for a large list of keywords and outputs a new version with highlights and removes pages without matches</p>
         <p>I wrote and use this for work but has been more or less replaced by the javascript tool above</p>
@@ -139,24 +140,24 @@ title: Projects
 
   <div class="project-row">
     <div class="project-info">
-      <h3 class="project-title"><a href="https://github.com/niveknosredneh/PFSG">FileSystem Grapher</a></h3>
+      <h3 class="project-title"><a href="https://codeberg.org/kvnhndrsn/PFSG">FileSystem Grapher</a></h3>
       <p class="programming-name"><strong><b> Python, Graphviz<b></strong></p>
       <p>Creates beautiful graphs of directories on your filesystem</p>
       <p class="programming-name"><strong>Last Updated:</strong> 2019</p>
     </div>
     <div class="project-image">
-      <a href="https://github.com/niveknosredneh/PFSG"><img class="project-image" src="/projects/sfdp.png" alt="Graphs"></a>
+      <a href="https://codeberg.org/kvnhndrsn/PFSG"><img class="project-image" src="/projects/sfdp.png" alt="Graphs"></a>
     </div>
   </div>
 
    <div class="project-row">
     <div class="project-info">
-      <h3 class="project-title"><a href="https://github.com/niveknosredneh/MagickStack">MagickStack</a></h3>
+      <h3 class="project-title"><a href="https://codeberg.org/kvnhndrsn/MagickStack">MagickStack</a></h3>
       <p class="programming-name"><strong><b> Python, Shell, ImageMagick<b></strong></p>
       <p>  merge/stack multiple images horizontally or vertically to create a single image out of many. Annotates image with timestamp and renames image with current date for a simpler upload to server.</p>
       <p class="programming-name"><strong>Last Updated:</strong> 2024</p>
     </div>
-      <a href="https://github.com/niveknosredneh/MagickStack"><img class="project-image" src="/projects/stack.png" alt="Graphs"></a>
+      <a href="https://codeberg.org/kvnhndrsn/MagickStack"><img class="project-image" src="/projects/stack.png" alt="Graphs"></a>
     </div>
   </div>
   

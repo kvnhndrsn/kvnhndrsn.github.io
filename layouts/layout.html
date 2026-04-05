@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'head.html' %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-color: #000;
+            --text-color: #fff;
+            --accent-color: #555;
+            --border-color: #333;
+            --bar-bg: rgba(10, 10, 10, 0.95);
+        }
+
+        html, body {
+            background-color: #000;
+            background-image: url("/assets/wallpapers/back2-dark.png");
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        body {
+            color: var(--text-color);
+            font-family: sans-serif;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 72px;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem 5vw;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* ── TASKBAR ── */
+        .system-bar {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 72px;
+            background: var(--bar-bg);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 10000;
+        }
+
+        .system-tray {
+            display: flex;
+            align-items: center;
+            gap: 7vw;
+        }
+
+        .task-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .task-button {
+            background: transparent;
+            border: none;
+            color: #eee;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.2s;
+        }
+
+        .task-button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* ── PRIMARY POP-UP MENUS ── */
+        /*
+         * Menus are shown/hidden by JS toggling display.
+         * Key: overflow: visible so the submenu can escape the parent's box.
+         */
+        .popup-menu {
+            position: absolute;
+            bottom: 72px;
+            left: 0;
+            background: #111;
+            border: 1px solid #444;
+            display: none;
+            flex-direction: column;
+            min-width: 200px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
+            overflow: visible;   /* CRITICAL – lets submenus escape */
+        }
+
+        .popup-menu.right-aligned {
+            left: auto;
+            right: 0;
+        }
+
+        /* ── MENU ROWS ── */
+        .popup-menu > a,
+        .has-submenu > .menu-row {
+            padding: 12px 16px;
+            color: #ccc;
+            text-decoration: none;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #222;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .popup-menu > a:hover,
+        .has-submenu:hover > .menu-row {
+            background: #222;
+            color: #fff;
+        }
+
+        .menu-icon {
+            width: 28px;
+            height: 28px;
+            filter: invert(1);
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
+
+        /* ── NESTED SUBMENUS ── */
+        /*
+         * Pure CSS hover — JS never touches these, so it can't break them.
+         * They fly LEFT of the parent item.
+         */
+        .has-submenu {
+            position: relative;
+        }
+
+        /* Arrow indicator */
+        .has-submenu > .menu-row::after {
+            content: "◂";
+            margin-left: auto;
+            padding-left: 12px;
+            opacity: 0.45;
+            font-size: 0.85rem;
+        }
+
+        .submenu {
+            position: absolute;
+            top: 0;
+            right: 100%;          /* fly left */
+            background: #181818;
+            border: 1px solid #444;
+            display: none;        /* hidden by default */
+            flex-direction: column;
+            min-width: 180px;
+            z-index: 10001;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.6);
+        }
+
+        /* Show submenu on hover of the parent row */
+        .has-submenu:hover > .submenu {
+            display: flex;
+        }
+
+        .submenu a {
+            padding: 12px 16px;
+            color: #ccc;
+            text-decoration: none;
+            font-size: 1rem;
+            border-bottom: 1px solid #222;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .submenu a:last-child {
+            border-bottom: none;
+        }
+
+        .submenu a:hover {
+            background: #262626;
+            color: #fff;
+        }
+
+        /* right-aligned parent menus: submenu should fly RIGHT instead */
+        .popup-menu.right-aligned .submenu {
+            right: auto;
+            left: 100%;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.6);
+        }
+
+        .popup-menu.right-aligned .has-submenu > .menu-row::after {
+            content: "▸";
+        }
+
+        @media (max-width: 600px) {
+            .task-button { padding: 8px 6px; font-size: 0.65rem; }
+            .popup-menu { min-width: 160px; }
+            .submenu { min-width: 150px; }
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        {{ content }}
+    </main>
+
+    <footer class="system-bar">
+
+        <div class="system-tray">
+
+            <!-- Contact -->
+            <div class="task-item">
+                <button class="task-button" onclick="toggleMenu(event,'menu-contact')">
+                    <img src="/assets/icons/at.svg" class="menu-icon">
+                </button>
+                <div id="menu-contact" class="popup-menu">
+                    <a href="mailto:umhendek@gmail.com"><img src="/assets/icons/gmail.svg" class="menu-icon"> Gmail</a>
+                    <a href="tel:13065024835"><img src="/assets/icons/phone.svg" class="menu-icon"> Phone</a>
+                </div>
+            </div>
+
+            <!-- Dev -->
+            <div class="task-item">
+                <button class="task-button" onclick="toggleMenu(event,'menu-dev')">
+                    <img src="/assets/icons/code.svg" class="menu-icon">
+                </button>
+                <div id="menu-dev" class="popup-menu">
+                    <a href="https://github.com/niveknosredneh"><img src="/assets/icons/github.svg" class="menu-icon"> GitHub</a>
+                    <a href="https://codeberg.org/kvnhndrsn"><img src="/assets/icons/codeberg.svg" class="menu-icon"> Codeberg</a>
+                </div>
+            </div>
+
+            <!-- Social (contains nested submenu) -->
+            <div class="task-item">
+                <button class="task-button" onclick="toggleMenu(event,'menu-social')">
+                    <img src="/assets/icons/hashtag.svg" class="menu-icon">
+                </button>
+                <div id="menu-social" class="popup-menu">
+                    <a href="https://www.youtube.com/kevinhenderson"><img src="/assets/icons/youtube.svg" class="menu-icon"> YouTube</a>
+
+                    <!-- Nested submenu — hover-only, JS-free -->
+                    <div class="has-submenu">
+                        <span class="menu-row">More Platforms</span>
+                        <div class="submenu">
+                            <a href="https://www.instagram.com/heavenkenderson">Instagram</a>
+                            <a href="https://www.facebook.com/heaven.kenderson.2025">Facebook</a>
+                            <a href="https://www.linkedin.com/in/kevin-henderson-9354a0a6/">LinkedIn</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gaming -->
+            <div class="task-item">
+                <button class="task-button" onclick="toggleMenu(event,'menu-gaming')">
+                    <img src="/assets/icons/queen.svg" class="menu-icon">
+                </button>
+                <div id="menu-gaming" class="popup-menu right-aligned">
+                    <a href="https://steamcommunity.com/profiles/76561198047742285/"><img src="/assets/icons/steam.svg" class="menu-icon"> Steam</a>
+                    <a href="https://retroachievements.org/user/turbomoses420"><img src="/assets/icons/retroachievements.svg" class="menu-icon"> RetroAchievements</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Start / Nav -->
+        <div class="task-item">
+            <button class="task-button" onclick="toggleMenu(event,'menu-start')">
+                <img src="/assets/icons/hamburger-menu.svg" class="menu-icon" style="width:40px;height:40px;">
+            </button>
+            <div id="menu-start" class="popup-menu right-aligned">
+                <a href="/">Home</a>
+                <a href="/projects">Projects</a>
+                <a href="/timelapses">Timelapses</a>
+                <a href="/about">About</a>
+            </div>
+        </div>
+
+    </footer>
+
+    <script>
+        function toggleMenu(event, menuId) {
+            event.stopPropagation();
+            var target = document.getElementById(menuId);
+            var isOpen = target.style.display === 'flex';
+
+            // Close every primary menu
+            document.querySelectorAll('.popup-menu').forEach(function(m) {
+                m.style.display = 'none';
+            });
+
+            // Open the clicked one (unless it was already open)
+            if (!isOpen) {
+                target.style.display = 'flex';
+            }
+        }
+
+        // Click outside closes everything
+        window.addEventListener('click', function(e) {
+            if (!e.target.closest('.task-item')) {
+                document.querySelectorAll('.popup-menu').forEach(function(m) {
+                    m.style.display = 'none';
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
