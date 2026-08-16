@@ -1,6 +1,7 @@
 node_modules/
 _site/
 *.webm
+!timelapses/*.webm
 projects/geotexdb/dist/pdfs
 
 # Build output
