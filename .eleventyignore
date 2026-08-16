@@ -2,3 +2,8 @@ readme.md
 CONTRIBUTING.md
 .github/
 _drafts/
+
+# .eleventyignore
+cycling_page/
+node_modules/
+_site/
