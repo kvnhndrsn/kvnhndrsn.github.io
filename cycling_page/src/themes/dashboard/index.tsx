@@ -122,7 +122,7 @@ function Dashboard() {
       )}
 
       <footer className="border-t border-[var(--color-border)] py-6 text-center text-sm text-[var(--color-muted)]">
-        &copy; {new Date().getFullYear()} Running Page 3.0
+        &copy; {new Date().getFullYear()} Cycling Page 3.0
       </footer>
     </div>
   );

@@ -40,6 +40,9 @@ module.exports = function(eleventyConfig) {
     });
     
     eleventyConfig.addPassthroughCopy('assets');
+    eleventyConfig.addPassthroughCopy('bicycles/*.jpg');
+    eleventyConfig.addPassthroughCopy('media/**/*.csv');
+    eleventyConfig.addPassthroughCopy('.nojekyll');
     eleventyConfig.setUseGitIgnore(false);
 
     return {

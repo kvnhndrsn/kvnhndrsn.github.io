@@ -1,4 +1,5 @@
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
+import mapboxgl from 'mapbox-gl';
 import React, {
   useRef,
   useCallback,
@@ -42,6 +43,12 @@ import RunMarker from './RunMarker';
 import RunMapButtons from './RunMapButtons';
 import styles from './style.module.css';
 import type { FeatureCollection } from 'geojson';
+
+// This page uses token-free external basemaps (MapCN / Carto), so the Mapbox
+// API base URL is pointed at a non-Mapbox host. This makes mapbox-gl's
+// EVENTS_URL getter return null, which prevents the telemetry/auth path from
+// failing with an empty access token and blanking the map via _revokeAuth().
+mapboxgl.baseApiUrl = 'https://basemaps.cartocdn.com';
 import type { RPGeometry } from '../../static/run_countries';
 import './mapbox.css';
 import LightsControl from './LightsControl';
@@ -459,13 +466,6 @@ const RunMap = ({
         <div className={styles.mapErrorNotification}>
           <span>⚠️ {mapError}</span>
           <button onClick={() => window.location.reload()}>Reload Page</button>
-          <a
-            href="https://github.com/yihong0618/running_page#map-tiles-customization"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Troubleshooting Guide
-          </a>
         </div>
       )}
       <RunMapButtons changeYear={changeYear} thisYear={thisYear} />
