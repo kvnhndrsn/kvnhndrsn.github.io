@@ -112,52 +112,49 @@ title: Projects
 
   <div class="project-row">
     <div class="project-info">
-      <h3 class="project-title"><a href="https://codeberg.org/kvnhndrsn/pdf_scan_JS">PDF Search</a></h3>
+      <h3 class="project-title"><a href="https://github.com/kvnhndrsn/kwpdf">PDF Keyword Search</a></h3>
       <p class="programming-name"><strong><b> Javascript, PDFjs, JSZip<b></strong></p>
       <p>Scans a zip or folder of PDFs for a large list of keywords and jump between matches.  </p>
       <p>I vibe coded this to be a more versatile version of the python tool below</p>
-      <a href="/projects/pdf.html">DEMO</a>
       <p class="programming-name"><strong>Last Updated:</strong> 2026</p>
     </div>
     <div class="project-image">
-      <a href="/projects/pdf.html"><img class="project-image" src="/projects/pdf.png" alt="PDF Highlighter"></a>
+      <a href="https://github.com/kvnhndrsn/kwpdf"><img class="project-image" src="/projects/pdf.webp" alt="PDF Highlighter"></a>
     </div>
   </div>
   
   <div class="project-row">
     <div class="project-info">
-      <h3 class="project-title"><a href="https://codeberg.org/kvnhndrsn/pdf_scan">PDF Keyword Highlighter</a></h3>
+      <h3 class="project-title"><a href="https://github.com/kvnhndrsn/pdf_scan">PDF Keyword Highlighter</a></h3>
       <p class="programming-name"><strong><b> Python, PyMuPDF<b></strong></p>
       <p>Scans a folder of PDFs for a large list of keywords and outputs a new version with highlights and removes pages without matches</p>
         <p>I wrote and use this for work but has been more or less replaced by the javascript tool above</p>
       <p class="programming-name"><strong>Last Updated:</strong> 2025</p>
     </div>
-    <div class="project-image">
-      <img class="project-image" src="/projects/pdf_scan.png" alt="PDF Highlighter">
-    </div>
+      <img class="project-image" src="/projects/pdf_scan.webp" alt="PDF Highlighter">
   </div>
   
 
   <div class="project-row">
     <div class="project-info">
-      <h3 class="project-title"><a href="https://codeberg.org/kvnhndrsn/PFSG">FileSystem Grapher</a></h3>
+      <h3 class="project-title"><a href="https://github.com/kvnhndrsn/PFSG">FileSystem Grapher</a></h3>
       <p class="programming-name"><strong><b> Python, Graphviz<b></strong></p>
       <p>Creates beautiful graphs of directories on your filesystem</p>
       <p class="programming-name"><strong>Last Updated:</strong> 2019</p>
     </div>
     <div class="project-image">
-      <a href="https://codeberg.org/kvnhndrsn/PFSG"><img class="project-image" src="/projects/sfdp.png" alt="Graphs"></a>
+      <a href="https://github.com/kvnhndrsn/PFSG"><img class="project-image" src="/projects/sfdp.webp" alt="Graphs"></a>
     </div>
   </div>
 
    <div class="project-row">
     <div class="project-info">
-      <h3 class="project-title"><a href="https://codeberg.org/kvnhndrsn/MagickStack">MagickStack</a></h3>
+      <h3 class="project-title"><a href="https://github.com/kvnhndrsn/MagickStack">MagickStack</a></h3>
       <p class="programming-name"><strong><b> Python, Shell, ImageMagick<b></strong></p>
       <p>  merge/stack multiple images horizontally or vertically to create a single image out of many. Annotates image with timestamp and renames image with current date for a simpler upload to server.</p>
       <p class="programming-name"><strong>Last Updated:</strong> 2024</p>
     </div>
-      <a href="https://codeberg.org/kvnhndrsn/MagickStack"><img class="project-image" src="/projects/stack.png" alt="Graphs"></a>
+      <a href="https://github.com/kvnhndrsn/MagickStack"><img class="project-image" src="/projects/stack.webp" alt="Graphs"></a>
     </div>
   </div>
   

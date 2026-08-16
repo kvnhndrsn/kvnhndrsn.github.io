@@ -3,14 +3,17 @@ layout: default
 title: Config
 ---
 
-```
-# Hyprland Config - Picture-in-Picture
-windowrule = match:title ^([Pp]icture[-\s]?[Ii]n[-\s]?[Pp]icture)(.*)$, float on
-windowrule = match:title ^([Pp]icture[-\s]?[Ii]n[-\s]?[Pp]icture)(.*)$, keep_aspect_ratio on
-windowrule = match:title ^([Pp]icture[-\s]?[Ii]n[-\s]?[Pp]icture)(.*)$, move (monitor_w*.0) (monitor_h*.75)
-windowrule = match:title ^([Pp]icture[-\s]?[Ii]n[-\s]?[Pp]icture)(.*)$, size (monitor_w*.25) (monitor_h*.25)
-windowrule = match:title ^([Pp]icture[-\s]?[Ii]n[-\s]?[Pp]icture)(.*)$, float on
-windowrule = match:title ^([Pp]icture[-\s]?[Ii]n[-\s]?[Pp]icture)(.*)$, pin on
-```
-
-
+###### - Model: HP Laptop 15-dy1xxx
+###### - CPU: Intel Core i5-1035G1
+###### - RAM: 8 GB
+###### - Graphics: Intel Iris Plus Graphics G1 (integrated)
+###### - Storage: 512 GB Intel NVMe SSD
+#
+###### - Kernel: 6.19.10-1-cachyos 
+###### - WM: Hyprland
+###### - QuickShell: Noctalia
+###### - Packages: [1775](./packages)
+###### - [Dotfiles](https://codeberg.org/kvnhndrsn/dotfiles)
+#
+###### updated April 2026 - downgraded to laptop only, no full size keyboard or monitor
+<img style="margin: 0 auto;" src="/config/screenshot.gif" width="100%" loading="lazy">

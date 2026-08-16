@@ -4,7 +4,10 @@
   "description": "A starter site for building a mind garden in eleventy.",
   "scripts": {
     "start": "eleventy --serve --quiet",
-    "compile": "eleventy"
+    "compile": "eleventy",
+    "build:11ty": "eleventy",
+    "build:cycling": "cd cycling_page && npm install && npm run build",
+    "build": "npm run build:11ty && npm run build:cycling"
   },
   "repository": {
     "type": "git",

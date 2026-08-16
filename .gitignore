@@ -1,0 +1,17 @@
+node_modules/
+_site/
+*.webm
+projects/geotexdb/dist/pdfs
+
+# Build output
+_site/
+cycling_page/dist/
+
+# Dependencies
+node_modules/
+cycling_page/node_modules/
+.venv/
+
+# System / Cache
+.DS_Store
+.env
