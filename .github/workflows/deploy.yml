@@ -3,20 +3,27 @@ name: Build and Deploy Site
 on:
   push:
     branches:
-      - main  # Change to master if your default branch is master
+      - main
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          submodules: true
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -25,18 +32,39 @@ jobs:
           cache: 'npm'
 
       - name: Install Root Dependencies
-        run: npm ci || npm install
+        run: npm ci
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: cycling_page/requirements.txt
+
+      - name: Install Python Dependencies
+        run: pip install -r cycling_page/requirements.txt
+
+      - name: Sync GPX Data
+        working-directory: cycling_page
+        run: |
+          python run_page/gpx_sync.py
+          python run_page/gen_svg.py --from-db --type github --output assets/github.svg
 
       - name: Install Cycling Page Dependencies
-        run: |
-          cd cycling_page
-          npm ci || npm install
+        working-directory: cycling_page
+        run: npm install
 
       - name: Build Complete Site
         run: npm run build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_site
+          path: ./_site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

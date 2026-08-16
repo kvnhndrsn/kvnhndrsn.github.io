@@ -1,6 +1,9 @@
 // Constants
-// Replace the hardcoded string with the env variable reference:
-export const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
+// For security reasons, please avoid using the default public token provided by Mapbox as much as possible.
+// Instead, manually add a new token and apply URL restrictions.
+// (please refer to https://github.com/yihong0618/running_page/issues/643#issuecomment-2042668580)
+// The map tiles are provided by MapCN (Carto basemaps) by default and do not require a token.
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
 const MUNICIPALITY_CITIES_ARR = [
   '北京市',
   '上海市',
