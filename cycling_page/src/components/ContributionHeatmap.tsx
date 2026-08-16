@@ -58,7 +58,7 @@ function getColorAll(typeRatio: number, displayType: string): string {
 
 function typeLabel(type: string, locale: string): string {
   const map: Record<string, { zh: string; en: string }> = {
-    Run: { zh: '跑步', en: 'Run' },
+    Run: { zh: '骑行', en: 'Ride' },
     Ride: { zh: '骑行', en: 'Ride' },
     Hike: { zh: '徒步', en: 'Hike' },
     Training: { zh: '训练', en: 'Training' },
@@ -277,8 +277,8 @@ export function ContributionHeatmap({
   const heatmapTitle =
     filter === 'Run'
       ? locale === 'zh'
-        ? '跑步热力图'
-        : 'Run Heatmap'
+        ? '骑行热力图'
+        : 'Ride Heatmap'
       : t('heatmapTitle');
 
   const handleSelectYear = (yr: number | 'all') => {

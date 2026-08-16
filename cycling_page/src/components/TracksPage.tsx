@@ -380,7 +380,7 @@ export function TracksPage({
   };
 
   const allSportTabs: { label: string; value: SportType; color: string }[] = [
-    { label: locale === 'zh' ? '跑步' : 'Run', value: 'Run', color: '#f97316' },
+    { label: locale === 'zh' ? '骑行' : 'Ride', value: 'Run', color: '#f97316' },
   ];
 
   return (
@@ -763,11 +763,11 @@ export function TracksPage({
                   <>
                     <span className="flex items-center gap-1.5">
                       <span className="inline-block h-0.5 w-3 rounded bg-[#f97316]" />
-                      {locale === 'zh' ? '跑步' : 'Run'}
+                      {locale === 'zh' ? '骑行' : 'Ride'}
                     </span>
                     <span className="flex items-center gap-1.5">
                       <span className="inline-block h-0.5 w-3 rounded bg-[#ef4444]" />
-                      {locale === 'zh' ? '跑步 >20km' : 'Run >20km'}
+                      {locale === 'zh' ? '骑行 >20km' : 'Ride >20km'}
                     </span>
                   </>
                 ) : null}

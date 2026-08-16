@@ -37,9 +37,9 @@ export interface Activity {
 const titleForShow = (run: Activity): string => {
   const date = run.start_date_local.slice(0, 11);
   const distance = (run.distance / M_TO_DIST).toFixed(2);
-  let name = 'Run';
+  let name = 'Ride';
   if (run.name.slice(0, 7) === 'Running') {
-    name = 'run';
+    name = 'ride';
   }
   if (run.name) {
     name = run.name;

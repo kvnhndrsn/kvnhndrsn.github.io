@@ -19,7 +19,7 @@ type DistanceFilter = 'all' | '10' | '20' | '40';
 
 function typeIcon(type: string): string {
   const icons: Record<string, string> = {
-    Run: '🏃',
+    Run: '🚴',
   };
   return icons[type] ?? '📌';
 }
