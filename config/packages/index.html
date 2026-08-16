@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+
+
+
+    
+
+
+
+
+
+
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon">
+
+<title>Config • Kevin</title>
+
+<meta name="description" content="1-2 sentences about the site (optional)">
+
+<meta property="og:title" content="Config • Kevin">
+<meta property="og:type" content="website">
+<meta property="og:url" content="kevin.nekoweb.org/config/packages/">
+<meta property="og:image" content="/assets/avatar.png">
+<meta property="og:description" content="1-2 sentences about the site (optional)">
+
+<link rel="canonical" href="kevin.nekoweb.org/config/packages/">
+
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter&display=swap">
+
+<link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+
+<link rel="stylesheet" href="/assets/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-color: #000 !important;
+            --text-color: #fff !important;
+            --accent-color: #555 !important;
+            --border-color: #333 !important;
+           --bar-bg: rgba(10, 10, 10, 0.45);
+            font-size: 22px;
+        }
+
+        html, body {
+            background-color: #000 !important;
+            background-image: url("/assets/wallpapers/back2-dark.png") !important;
+            background-attachment: fixed !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+        }
+
+        body {
+            color: var(--text-color);
+            font-family: sans-serif;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 72px; /* Space for fixed taskbar */
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem 5vw;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* --- SYSTEM BAR (TASKBAR) --- */
+        .system-bar {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 72px;
+            background: var(--bar-bg);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 10000;
+            overflow: visible; /* Required for sub-menus */
+        }
+
+        .system-tray {
+            display: flex;
+            align-items: center;
+            gap: 1.0vw;
+        }
+
+        .task-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .task-button {
+            background: transparent;
+            border: none;
+            color: #eee;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.2s;
+        }
+
+        .task-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- POPUP MENUS --- */
+        .popup-menu {
+            position: absolute;
+            bottom: 72px;
+            left: 0;
+            background: #111111dd;
+            border: 1px solid #444;
+            display: none;
+            flex-direction: column;
+            min-width: 300px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
+            overflow: visible !important;
+        }
+
+        .popup-menu.right-aligned {
+            left: auto;
+            right: 0;
+        }
+
+        .popup-menu a, .has-submenu > span {
+            padding: 26px 14px;
+            color: #ccc;
+            text-decoration: none;
+            font-size: 1.8rem;
+            border-bottom: 1px solid #222;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .popup-menu a:hover, .has-submenu:hover > span {
+            background: #222;
+            color: #fff;
+        }
+
+        .menu-icon {
+            width: 54px;
+            height: 54px;
+            filter: invert(1);
+            opacity: 0.7;
+        }
+
+        .social-menu-icon {
+            width: 26px;
+            height: 26px;
+            filter: invert(1);
+            opacity: 0.7;
+        }
+
+        /* --- NESTED SUB-MENUS --- */
+        .has-submenu {
+            position: relative;
+        }
+
+        .submenu {
+            position: absolute;
+            top: 0;
+            right: 100%; /* Fly out to the LEFT */
+            background: #181818;
+            border: 1px solid #444;
+            display: none;
+            flex-direction: column;
+            min-width: 180px;
+            z-index: 10001;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+        }
+
+        .has-submenu:hover > .submenu {
+            display: flex;
+        }
+
+        .has-submenu > span::after {
+            content: " <";
+            margin-left: auto;
+            opacity: 0.5;
+        }
+
+    </style>
+</head>
+<body>
+
+    <main>
+        <ul>
+<li>7zip</li>
+<li>a52dec</li>
+<li>aalib</li>
+<li>abseil-cpp</li>
+<li>accounts-qml-module</li>
+<li>accountsservice</li>
+<li>acl</li>
+<li>ada</li>
+<li>adw-gtk-theme</li>
+<li>adwaita-cursors</li>
+<li>adwaita-fonts</li>
+<li>adwaita-icon-theme</li>
+<li>adwaita-icon-theme-legacy</li>
+<li>aha</li>
+<li>alacritty</li>
+<li>alsa-card-profiles</li>
+<li>alsa-firmware</li>
+<li>alsa-lib</li>
+<li>alsa-plugins</li>
+<li>alsa-topology-conf</li>
+<li>alsa-ucm-conf</li>
+<li>alsa-utils</li>
+<li>ananicy-cpp</li>
+<li>antigravity</li>
+<li>aom</li>
+<li>appimagelauncher</li>
+<li>appstream</li>
+<li>appstream-qt</li>
+<li>aquamarine</li>
+<li>archlinux-keyring</li>
+<li>aribb24</li>
+<li>aribb25</li>
+<li>ark</li>
+<li>aspnet-runtime-9.0</li>
+<li>astro-bin</li>
+<li>at-spi2-core</li>
+<li>atkmm</li>
+<li>attica</li>
+<li>attr</li>
+<li>audacious</li>
+<li>audacious-plugins</li>
+<li>audacity</li>
+<li>audit</li>
+<li>aurorae</li>
+<li>autoconf</li>
+<li>automake</li>
+<li>avahi</li>
+<li>awesome-terminal-fonts</li>
+<li>ayatana-ido</li>
+<li>babl</li>
+<li>baloo</li>
+<li>baloo-widgets</li>
+<li>base</li>
+<li>base-devel</li>
+<li>bash</li>
+<li>bash-completion</li>
+<li>bat</li>
+<li>bc</li>
+<li>bind</li>
+<li>binutils</li>
+<li>bison</li>
+<li>blas</li>
+<li>bluedevil</li>
+<li>bluez</li>
+<li>bluez-hid2hci</li>
+<li>bluez-libs</li>
+<li>bluez-qt</li>
+<li>bluez-utils</li>
+<li>bolt</li>
+<li>boost-libs</li>
+<li>bpf</li>
+<li>brave-bin</li>
+<li>breeze</li>
+<li>breeze-cursors</li>
+<li>breeze-gtk</li>
+<li>breeze-icons</li>
+<li>brightnessctl</li>
+<li>brotli</li>
+<li>btop</li>
+<li>btrfs-assistant</li>
+<li>btrfs-progs</li>
+<li>bubblewrap</li>
+<li>bzip2</li>
+<li>c-ares</li>
+<li>ca-certificates</li>
+<li>ca-certificates-mozilla</li>
+<li>ca-certificates-utils</li>
+<li>cabextract</li>
+<li>cachyos-alacritty-config</li>
+<li>cachyos-ananicy-rules</li>
+<li>cachyos-emerald-kde-theme-git</li>
+<li>cachyos-fish-config</li>
+<li>cachyos-hello</li>
+<li>cachyos-hooks</li>
+<li>cachyos-iridescent-kde</li>
+<li>cachyos-kde-settings</li>
+<li>cachyos-kernel-manager</li>
+<li>cachyos-keyring</li>
+<li>cachyos-micro-settings</li>
+<li>cachyos-mirrorlist</li>
+<li>cachyos-nord-kde-theme-git</li>
+<li>cachyos-packageinstaller</li>
+<li>cachyos-plymouth-bootanimation</li>
+<li>cachyos-rate-mirrors</li>
+<li>cachyos-settings</li>
+<li>cachyos-themes-sddm</li>
+<li>cachyos-v3-mirrorlist</li>
+<li>cachyos-v4-mirrorlist</li>
+<li>cachyos-wallpapers</li>
+<li>cachyos-zsh-config</li>
+<li>cairo</li>
+<li>cairomm</li>
+<li>cantarell-fonts</li>
+<li>capitaine-cursors</li>
+<li>cava</li>
+<li>cblas</li>
+<li>cdparanoia</li>
+<li>cfitsio</li>
+<li>char-white</li>
+<li>chromaprint</li>
+<li>chwd</li>
+<li>cifs-utils</li>
+<li>cjson</li>
+<li>clang</li>
+<li>clang21</li>
+<li>clinfo</li>
+<li>cliphist</li>
+<li>cmake</li>
+<li>code</li>
+<li>compiler-rt</li>
+<li>compiler-rt21</li>
+<li>composefs</li>
+<li>confuse</li>
+<li>convertlit</li>
+<li>coreutils</li>
+<li>cpio</li>
+<li>cppdap</li>
+<li>cpupower</li>
+<li>cracklib</li>
+<li>crawl</li>
+<li>cronie</li>
+<li>cryptsetup</li>
+<li>curl</li>
+<li>dart-sass</li>
+<li>dav1d</li>
+<li>db5.3</li>
+<li>dbus</li>
+<li>dbus-broker</li>
+<li>dbus-broker-units</li>
+<li>dbus-glib</li>
+<li>dbus-units</li>
+<li>dconf</li>
+<li>ddcutil</li>
+<li>debugedit</li>
+<li>default-cursors</li>
+<li>desktop-file-utils</li>
+<li>device-mapper</li>
+<li>dhclient</li>
+<li>diffutils</li>
+<li>ding-libs</li>
+<li>discount</li>
+<li>djvulibre</li>
+<li>dmidecode</li>
+<li>dmraid</li>
+<li>dnsmasq</li>
+<li>dnssec-anchors</li>
+<li>dolphin</li>
+<li>dolphin-emu</li>
+<li>dolphin-plugins</li>
+<li>dosfstools</li>
+<li>dotnet-host</li>
+<li>dotnet-runtime-9.0</li>
+<li>double-conversion</li>
+<li>duf</li>
+<li>duktape</li>
+<li>e2fsprogs</li>
+<li>ebook-tools</li>
+<li>editorconfig-core-c</li>
+<li>efibootmgr</li>
+<li>efitools</li>
+<li>efivar</li>
+<li>egl-wayland</li>
+<li>eglexternalplatform</li>
+<li>electron</li>
+<li>electron39</li>
+<li>ell</li>
+<li>embree</li>
+<li>enchant</li>
+<li>enet</li>
+<li>ethtool</li>
+<li>ex-vi-compat</li>
+<li>exfatprogs</li>
+<li>exiv2</li>
+<li>exo</li>
+<li>expac</li>
+<li>expat</li>
+<li>eza</li>
+<li>f2fs-tools</li>
+<li>faac</li>
+<li>faad2</li>
+<li>fakeroot</li>
+<li>fastfetch</li>
+<li>fcft</li>
+<li>fd</li>
+<li>ffmpeg</li>
+<li>ffmpeg4.4</li>
+<li>ffmpegthumbnailer</li>
+<li>ffmpegthumbs</li>
+<li>fftw</li>
+<li>file</li>
+<li>filelight</li>
+<li>filesystem</li>
+<li>findutils</li>
+<li>firefox</li>
+<li>fish</li>
+<li>fish-autopair</li>
+<li>fish-pure-prompt</li>
+<li>fisher</li>
+<li>flac</li>
+<li>flashrom</li>
+<li>flatpak</li>
+<li>flex</li>
+<li>fluidsynth</li>
+<li>fmt</li>
+<li>fontconfig</li>
+<li>frameworkintegration</li>
+<li>freeglut</li>
+<li>freetype2</li>
+<li>frei0r-plugins</li>
+<li>fribidi</li>
+<li>fsarchiver</li>
+<li>ftgl</li>
+<li>fuse-common</li>
+<li>fuse2</li>
+<li>fuse3</li>
+<li>fuzzel</li>
+<li>fwupd</li>
+<li>fwupd-efi</li>
+<li>fzf</li>
+<li>gamemode</li>
+<li>gamescope</li>
+<li>gavl</li>
+<li>gawk</li>
+<li>gc</li>
+<li>gcc</li>
+<li>gcc-libs</li>
+<li>gcr</li>
+<li>gcr-4</li>
+<li>gdb</li>
+<li>gdb-common</li>
+<li>gdbm</li>
+<li>gdk-pixbuf2</li>
+<li>gegl</li>
+<li>geoclue</li>
+<li>gettext</li>
+<li>ghostscript</li>
+<li>giflib</li>
+<li>gifsicle</li>
+<li>gimp</li>
+<li>git</li>
+<li>glances</li>
+<li>glaze</li>
+<li>glew</li>
+<li>glfw</li>
+<li>glib-networking</li>
+<li>glib2</li>
+<li>glibc</li>
+<li>glibmm</li>
+<li>glm</li>
+<li>glslang</li>
+<li>glu</li>
+<li>glycin</li>
+<li>gmp</li>
+<li>gnome-desktop</li>
+<li>gnome-desktop-common</li>
+<li>gnome-disk-utility</li>
+<li>gnome-keyring</li>
+<li>gnulib-l10n</li>
+<li>gnupg</li>
+<li>gnutls</li>
+<li>go</li>
+<li>go-yq</li>
+<li>gobject-introspection</li>
+<li>gobject-introspection-runtime</li>
+<li>godot</li>
+<li>google-chrome</li>
+<li>gparted</li>
+<li>gperftools</li>
+<li>gpgme</li>
+<li>gpgmepp</li>
+<li>gpm</li>
+<li>graphene</li>
+<li>graphite</li>
+<li>grep</li>
+<li>grim</li>
+<li>groff</li>
+<li>gsettings-desktop-schemas</li>
+<li>gsettings-system-schemas</li>
+<li>gsm</li>
+<li>gssdp</li>
+<li>gssproxy</li>
+<li>gst-libav</li>
+<li>gst-plugin-pipewire</li>
+<li>gst-plugin-va</li>
+<li>gst-plugins-bad</li>
+<li>gst-plugins-bad-libs</li>
+<li>gst-plugins-base</li>
+<li>gst-plugins-base-libs</li>
+<li>gst-plugins-good</li>
+<li>gst-plugins-ugly</li>
+<li>gstreamer</li>
+<li>gtest</li>
+<li>gtk-layer-shell</li>
+<li>gtk-update-icon-cache</li>
+<li>gtk3</li>
+<li>gtk4</li>
+<li>gtkmm3</li>
+<li>gtksourceview4</li>
+<li>gtksourceviewmm</li>
+<li>guile</li>
+<li>gupnp</li>
+<li>gupnp-igd</li>
+<li>gwenview</li>
+<li>gzip</li>
+<li>handbrake</li>
+<li>handbrake-cli</li>
+<li>harfbuzz</li>
+<li>harfbuzz-icu</li>
+<li>haruna</li>
+<li>haveged</li>
+<li>hdparm</li>
+<li>hicolor-icon-theme</li>
+<li>hidapi</li>
+<li>highway</li>
+<li>htop</li>
+<li>hugo</li>
+<li>hunspell</li>
+<li>hwdata</li>
+<li>hwdetect</li>
+<li>hwinfo</li>
+<li>hwloc</li>
+<li>hyphen</li>
+<li>hyprcursor</li>
+<li>hyprgraphics</li>
+<li>hypridle</li>
+<li>hyprland</li>
+<li>hyprland-guiutils</li>
+<li>hyprland-protocols-git</li>
+<li>hyprlang-git</li>
+<li>hyprlock</li>
+<li>hyprpicker</li>
+<li>hyprshot</li>
+<li>hyprtoolkit</li>
+<li>hyprutils-git</li>
+<li>hyprwayland-scanner-git</li>
+<li>hyprwire</li>
+<li>i2c-tools</li>
+<li>iana-etc</li>
+<li>icu</li>
+<li>iio-sensor-proxy</li>
+<li>ijs</li>
+<li>illogical-impulse-audio</li>
+<li>illogical-impulse-backlight</li>
+<li>illogical-impulse-basic</li>
+<li>illogical-impulse-bibata-modern-classic-bin</li>
+<li>illogical-impulse-kde</li>
+<li>illogical-impulse-microtex-git</li>
+<li>illogical-impulse-portal</li>
+<li>illogical-impulse-python</li>
+<li>illogical-impulse-screencapture</li>
+<li>illogical-impulse-toolkit</li>
+<li>illogical-impulse-widgets</li>
+<li>imagemagick</li>
+<li>imath</li>
+<li>imlib2</li>
+<li>inetutils</li>
+<li>iniparser</li>
+<li>intel-gmmlib</li>
+<li>intel-gpu-tools</li>
+<li>intel-media-driver</li>
+<li>intel-media-sdk</li>
+<li>intel-ucode</li>
+<li>inxi</li>
+<li>iproute2</li>
+<li>iptables-nft</li>
+<li>iputils</li>
+<li>iso-codes</li>
+<li>iw</li>
+<li>iwd</li>
+<li>jack2</li>
+<li>jansson</li>
+<li>jasper</li>
+<li>java-environment-common</li>
+<li>java-runtime-common</li>
+<li>jbig2dec</li>
+<li>jbigkit</li>
+<li>jdk-openjdk</li>
+<li>jellyfin-ffmpeg</li>
+<li>jellyfin-server</li>
+<li>jellyfin-web</li>
+<li>jemalloc</li>
+<li>jfsutils</li>
+<li>jq</li>
+<li>json-c</li>
+<li>json-glib</li>
+<li>jsoncpp</li>
+<li>kaccounts-integration</li>
+<li>kactivitymanagerd</li>
+<li>karchive</li>
+<li>kate</li>
+<li>kauth</li>
+<li>kbd</li>
+<li>kbookmarks</li>
+<li>kcalc</li>
+<li>kcmutils</li>
+<li>kcodecs</li>
+<li>kcolorpicker</li>
+<li>kcolorscheme</li>
+<li>kcompletion</li>
+<li>kconfig</li>
+<li>kconfigwidgets</li>
+<li>kcontacts</li>
+<li>kcoreaddons</li>
+<li>kcrash</li>
+<li>kdbusaddons</li>
+<li>kddockwidgets</li>
+<li>kde-cli-tools</li>
+<li>kde-gtk-config</li>
+<li>kdeclarative</li>
+<li>kdeconnect</li>
+<li>kdecoration</li>
+<li>kded</li>
+<li>kdegraphics-mobipocket</li>
+<li>kdegraphics-thumbnailers</li>
+<li>kdenlive</li>
+<li>kdeplasma-addons</li>
+<li>kdesu</li>
+<li>kdialog</li>
+<li>kdnssd</li>
+<li>kdsingleapplication</li>
+<li>kdsoap</li>
+<li>kdsoap-ws-discovery-client</li>
+<li>keyutils</li>
+<li>kfilemetadata</li>
+<li>kglobalaccel</li>
+<li>kglobalacceld</li>
+<li>kguiaddons</li>
+<li>kholidays</li>
+<li>ki18n</li>
+<li>kiconthemes</li>
+<li>kidletime</li>
+<li>kimageannotator</li>
+<li>kimageformats</li>
+<li>kinfocenter</li>
+<li>kio</li>
+<li>kio-admin</li>
+<li>kio-extras</li>
+<li>kio-fuse</li>
+<li>kirigami</li>
+<li>kirigami-addons</li>
+<li>kitemmodels</li>
+<li>kitemviews</li>
+<li>kjobwidgets</li>
+<li>kmenuedit</li>
+<li>kmod</li>
+<li>knewstuff</li>
+<li>knighttime</li>
+<li>knotifications</li>
+<li>knotifyconfig</li>
+<li>konsole</li>
+<li>kooha</li>
+<li>kpackage</li>
+<li>kparts</li>
+<li>kpeople</li>
+<li>kpipewire</li>
+<li>kpmcore</li>
+<li>kpty</li>
+<li>kquickcharts</li>
+<li>kquickimageeditor</li>
+<li>krb5</li>
+<li>krunner</li>
+<li>kscreen</li>
+<li>kscreenlocker</li>
+<li>kservice</li>
+<li>kstatusnotifieritem</li>
+<li>ksvg</li>
+<li>ksystemstats</li>
+<li>ktexteditor</li>
+<li>ktextwidgets</li>
+<li>kunitconversion</li>
+<li>kuserfeedback</li>
+<li>kwallet</li>
+<li>kwallet-pam</li>
+<li>kwalletmanager</li>
+<li>kwayland</li>
+<li>kwidgetsaddons</li>
+<li>kwin</li>
+<li>kwindowsystem</li>
+<li>kxmlgui</li>
+<li>l-smash</li>
+<li>lame</li>
+<li>lapack</li>
+<li>layer-shell-qt</li>
+<li>layer-shell-qt5</li>
+<li>lcms2</li>
+<li>ldb</li>
+<li>leancrypto</li>
+<li>lensfun</li>
+<li>leptonica</li>
+<li>less</li>
+<li>lib32-alsa-lib</li>
+<li>lib32-alsa-plugins</li>
+<li>lib32-audit</li>
+<li>lib32-brotli</li>
+<li>lib32-bzip2</li>
+<li>lib32-clang</li>
+<li>lib32-curl</li>
+<li>lib32-dbus</li>
+<li>lib32-e2fsprogs</li>
+<li>lib32-expat</li>
+<li>lib32-fontconfig</li>
+<li>lib32-freetype2</li>
+<li>lib32-gcc-libs</li>
+<li>lib32-glib2</li>
+<li>lib32-glibc</li>
+<li>lib32-gmp</li>
+<li>lib32-gnutls</li>
+<li>lib32-gst-plugins-base-libs</li>
+<li>lib32-gstreamer</li>
+<li>lib32-icu</li>
+<li>lib32-json-c</li>
+<li>lib32-keyutils</li>
+<li>lib32-krb5</li>
+<li>lib32-libcap</li>
+<li>lib32-libdisplay-info</li>
+<li>lib32-libdrm</li>
+<li>lib32-libelf</li>
+<li>lib32-libffi</li>
+<li>lib32-libgcrypt</li>
+<li>lib32-libglvnd</li>
+<li>lib32-libgpg-error</li>
+<li>lib32-libgudev</li>
+<li>lib32-libidn2</li>
+<li>lib32-libjpeg-turbo</li>
+<li>lib32-libldap</li>
+<li>lib32-libnghttp2</li>
+<li>lib32-libnghttp3</li>
+<li>lib32-libngtcp2</li>
+<li>lib32-libnm</li>
+<li>lib32-libnsl</li>
+<li>lib32-libogg</li>
+<li>lib32-libpciaccess</li>
+<li>lib32-libpipewire</li>
+<li>lib32-libpng</li>
+<li>lib32-libpsl</li>
+<li>lib32-libssh2</li>
+<li>lib32-libtasn1</li>
+<li>lib32-libtheora</li>
+<li>lib32-libtirpc</li>
+<li>lib32-libunistring</li>
+<li>lib32-libunwind</li>
+<li>lib32-libusb</li>
+<li>lib32-libva</li>
+<li>lib32-libvdpau</li>
+<li>lib32-libx11</li>
+<li>lib32-libxau</li>
+<li>lib32-libxcb</li>
+<li>lib32-libxcrypt</li>
+<li>lib32-libxcrypt-compat</li>
+<li>lib32-libxdmcp</li>
+<li>lib32-libxext</li>
+<li>lib32-libxfixes</li>
+<li>lib32-libxi</li>
+<li>lib32-libxinerama</li>
+<li>lib32-libxml2</li>
+<li>lib32-libxshmfence</li>
+<li>lib32-libxss</li>
+<li>lib32-libxv</li>
+<li>lib32-libxxf86vm</li>
+<li>lib32-llvm-libs</li>
+<li>lib32-lm_sensors</li>
+<li>lib32-mesa</li>
+<li>lib32-mpg123</li>
+<li>lib32-ncurses</li>
+<li>lib32-nettle</li>
+<li>lib32-nspr</li>
+<li>lib32-nss</li>
+<li>lib32-openal</li>
+<li>lib32-opencl-mesa</li>
+<li>lib32-openssl</li>
+<li>lib32-orc</li>
+<li>lib32-p11-kit</li>
+<li>lib32-pam</li>
+<li>lib32-pcre2</li>
+<li>lib32-pipewire</li>
+<li>lib32-speex</li>
+<li>lib32-spirv-llvm-translator</li>
+<li>lib32-spirv-tools</li>
+<li>lib32-sqlite</li>
+<li>lib32-systemd</li>
+<li>lib32-util-linux</li>
+<li>lib32-vkd3d</li>
+<li>lib32-vulkan-icd-loader</li>
+<li>lib32-vulkan-intel</li>
+<li>lib32-vulkan-mesa-implicit-layers</li>
+<li>lib32-vulkan-radeon</li>
+<li>lib32-wayland</li>
+<li>lib32-xcb-util-keysyms</li>
+<li>lib32-xz</li>
+<li>lib32-zlib-ng</li>
+<li>lib32-zlib-ng-compat</li>
+<li>lib32-zstd</li>
+<li>libaccounts-glib</li>
+<li>libaccounts-qt</li>
+<li>libadwaita</li>
+<li>libaio</li>
+<li>libajantv2</li>
+<li>libappindicator</li>
+<li>libarchive</li>
+<li>libasan</li>
+<li>libass</li>
+<li>libassuan</li>
+<li>libasyncns</li>
+<li>libatasmart</li>
+<li>libatomic</li>
+<li>libavc1394</li>
+<li>libavif</li>
+<li>libavtp</li>
+<li>libayatana-appindicator</li>
+<li>libayatana-indicator</li>
+<li>libb2</li>
+<li>libb64</li>
+<li>libblockdev</li>
+<li>libblockdev-crypto</li>
+<li>libblockdev-fs</li>
+<li>libblockdev-loop</li>
+<li>libblockdev-mdraid</li>
+<li>libblockdev-nvme</li>
+<li>libblockdev-part</li>
+<li>libblockdev-smart</li>
+<li>libblockdev-swap</li>
+<li>libbluray</li>
+<li>libbpf</li>
+<li>libbs2b</li>
+<li>libbsd</li>
+<li>libbytesize</li>
+<li>libcaca</li>
+<li>libcanberra</li>
+<li>libcap</li>
+<li>libcap-ng</li>
+<li>libcbor</li>
+<li>libcddb</li>
+<li>libcdio</li>
+<li>libcdio-paranoia</li>
+<li>libclc</li>
+<li>libcloudproviders</li>
+<li>libcolord</li>
+<li>libcue</li>
+<li>libcups</li>
+<li>libdaemon</li>
+<li>libdatachannel</li>
+<li>libdatrie</li>
+<li>libdbusmenu-glib</li>
+<li>libdbusmenu-gtk3</li>
+<li>libdc1394</li>
+<li>libdca</li>
+<li>libde265</li>
+<li>libdecor</li>
+<li>libdeflate</li>
+<li>libdisplay-info</li>
+<li>libdmtx</li>
+<li>libdovi</li>
+<li>libdrm</li>
+<li>libdv</li>
+<li>libdvbpsi</li>
+<li>libdvdcss</li>
+<li>libdvdnav</li>
+<li>libdvdread</li>
+<li>libebml</li>
+<li>libebur128</li>
+<li>libedit</li>
+<li>libei</li>
+<li>libelf</li>
+<li>libepoxy</li>
+<li>libevdev</li>
+<li>libevent</li>
+<li>libexif</li>
+<li>libfakekey</li>
+<li>libfdk-aac</li>
+<li>libffi</li>
+<li>libfontenc</li>
+<li>libfreeaptx</li>
+<li>libftdi</li>
+<li>libfyaml</li>
+<li>libgcc</li>
+<li>libgcrypt</li>
+<li>libgee</li>
+<li>libgexiv2</li>
+<li>libgfortran</li>
+<li>libgirepository</li>
+<li>libgit2</li>
+<li>libglvnd</li>
+<li>libgme</li>
+<li>libgnomekbd</li>
+<li>libgomp</li>
+<li>libgoom2</li>
+<li>libgpg-error</li>
+<li>libgpod</li>
+<li>libgsf</li>
+<li>libgtop</li>
+<li>libgudev</li>
+<li>libhandy</li>
+<li>libheif</li>
+<li>libice</li>
+<li>libid3tag</li>
+<li>libidn</li>
+<li>libidn2</li>
+<li>libiec61883</li>
+<li>libimagequant</li>
+<li>libimobiledevice</li>
+<li>libimobiledevice-glue</li>
+<li>libinih</li>
+<li>libinput</li>
+<li>libisl</li>
+<li>libjcat</li>
+<li>libjpeg-turbo</li>
+<li>libjuice</li>
+<li>libjxl</li>
+<li>libkate</li>
+<li>libkdcraw</li>
+<li>libkexiv2</li>
+<li>libksba</li>
+<li>libkscreen</li>
+<li>libksysguard</li>
+<li>liblc3</li>
+<li>libldac</li>
+<li>libldap</li>
+<li>libliftoff</li>
+<li>liblqr</li>
+<li>liblrdf</li>
+<li>liblsan</li>
+<li>libltc</li>
+<li>libmad</li>
+<li>libmakepkg-dropins</li>
+<li>libmalcontent</li>
+<li>libmanette</li>
+<li>libmatroska</li>
+<li>libmaxminddb</li>
+<li>libmbim</li>
+<li>libmd</li>
+<li>libmfx</li>
+<li>libmicrodns</li>
+<li>libmm-glib</li>
+<li>libmms</li>
+<li>libmng</li>
+<li>libmnl</li>
+<li>libmodplug</li>
+<li>libmpc</li>
+<li>libmpcdec</li>
+<li>libmpeg2</li>
+<li>libmspack</li>
+<li>libmtp</li>
+<li>libmypaint</li>
+<li>libmysofa</li>
+<li>libnatpmp</li>
+<li>libndp</li>
+<li>libnet</li>
+<li>libnetfilter_conntrack</li>
+<li>libnewt</li>
+<li>libnfnetlink</li>
+<li>libnfs</li>
+<li>libnftnl</li>
+<li>libnghttp2</li>
+<li>libnghttp3</li>
+<li>libngtcp2</li>
+<li>libnice</li>
+<li>libnl</li>
+<li>libnm</li>
+<li>libnma-common</li>
+<li>libnma-gtk4</li>
+<li>libnotify</li>
+<li>libnsl</li>
+<li>libnvme</li>
+<li>libobjc</li>
+<li>libogg</li>
+<li>liboggz</li>
+<li>libopenmpt</li>
+<li>libopenraw</li>
+<li>libp11-kit</li>
+<li>libpaper</li>
+<li>libpcap</li>
+<li>libpciaccess</li>
+<li>libpgm</li>
+<li>libpipeline</li>
+<li>libpipewire</li>
+<li>libplacebo</li>
+<li>libplasma</li>
+<li>libplist</li>
+<li>libpng</li>
+<li>libportal</li>
+<li>libportal-gtk4</li>
+<li>libprocps</li>
+<li>libproxy</li>
+<li>libpsl</li>
+<li>libpulse</li>
+<li>libpwquality</li>
+<li>libqaccessibilityclient-qt6</li>
+<li>libqalculate</li>
+<li>libqmi</li>
+<li>libqrtr-glib</li>
+<li>libquadmath</li>
+<li>libraqm</li>
+<li>libraw</li>
+<li>libraw1394</li>
+<li>librist</li>
+<li>librsvg</li>
+<li>libsamplerate</li>
+<li>libsasl</li>
+<li>libsbsms</li>
+<li>libseccomp</li>
+<li>libsecret</li>
+<li>libshout</li>
+<li>libsidplayfp</li>
+<li>libsigc++</li>
+<li>libsixel</li>
+<li>libsm</li>
+<li>libsndfile</li>
+<li>libsodium</li>
+<li>libsoup</li>
+<li>libsoup3</li>
+<li>libsoxr</li>
+<li>libspectre</li>
+<li>libspeechd</li>
+<li>libspiro</li>
+<li>libspng</li>
+<li>libsquish</li>
+<li>libsrtp</li>
+<li>libssc</li>
+<li>libssh</li>
+<li>libssh2</li>
+<li>libstdc++</li>
+<li>libstemmer</li>
+<li>libsysprof-capture</li>
+<li>libtasn1</li>
+<li>libtatsu</li>
+<li>libteam</li>
+<li>libthai</li>
+<li>libtheora</li>
+<li>libtiff</li>
+<li>libtiger</li>
+<li>libtirpc</li>
+<li>libtommath</li>
+<li>libtool</li>
+<li>libtsan</li>
+<li>libubsan</li>
+<li>libunibreak</li>
+<li>libunistring</li>
+<li>libunwind</li>
+<li>libupnp</li>
+<li>liburcu</li>
+<li>liburing</li>
+<li>libusb</li>
+<li>libusb-compat</li>
+<li>libusbmuxd</li>
+<li>libutempter</li>
+<li>libutf8proc</li>
+<li>libuv</li>
+<li>libva</li>
+<li>libvdpau</li>
+<li>libverto</li>
+<li>libvlc</li>
+<li>libvlc-luajit</li>
+<li>libvorbis</li>
+<li>libvpl</li>
+<li>libvpx</li>
+<li>libwacom</li>
+<li>libwbclient</li>
+<li>libwebp</li>
+<li>libwireplumber</li>
+<li>libwmf</li>
+<li>libwnck3</li>
+<li>libwslay</li>
+<li>libx11</li>
+<li>libx86emu</li>
+<li>libxau</li>
+<li>libxaw</li>
+<li>libxcb</li>
+<li>libxcomposite</li>
+<li>libxcrypt</li>
+<li>libxcrypt-compat</li>
+<li>libxcursor</li>
+<li>libxcvt</li>
+<li>libxdamage</li>
+<li>libxdmcp</li>
+<li>libxext</li>
+<li>libxfce4ui</li>
+<li>libxfce4util</li>
+<li>libxfixes</li>
+<li>libxfont2</li>
+<li>libxft</li>
+<li>libxi</li>
+<li>libxinerama</li>
+<li>libxkbcommon</li>
+<li>libxkbcommon-x11</li>
+<li>libxkbfile</li>
+<li>libxklavier</li>
+<li>libxml2</li>
+<li>libxmlb</li>
+<li>libxmu</li>
+<li>libxpm</li>
+<li>libxpresent</li>
+<li>libxrandr</li>
+<li>libxrender</li>
+<li>libxres</li>
+<li>libxshmfence</li>
+<li>libxslt</li>
+<li>libxss</li>
+<li>libxt</li>
+<li>libxtst</li>
+<li>libxv</li>
+<li>libxxf86vm</li>
+<li>libyaml</li>
+<li>libyuv</li>
+<li>libzip</li>
+<li>licenses</li>
+<li>lilv</li>
+<li>linux-api-headers</li>
+<li>linux-cachyos</li>
+<li>linux-cachyos-headers</li>
+<li>linux-cachyos-lts</li>
+<li>linux-cachyos-lts-headers</li>
+<li>linux-firmware</li>
+<li>linux-firmware-amdgpu</li>
+<li>linux-firmware-atheros</li>
+<li>linux-firmware-broadcom</li>
+<li>linux-firmware-cirrus</li>
+<li>linux-firmware-intel</li>
+<li>linux-firmware-mediatek</li>
+<li>linux-firmware-nvidia</li>
+<li>linux-firmware-other</li>
+<li>linux-firmware-radeon</li>
+<li>linux-firmware-realtek</li>
+<li>linux-firmware-whence</li>
+<li>lirc</li>
+<li>live-media</li>
+<li>lld</li>
+<li>llhttp</li>
+<li>llvm</li>
+<li>llvm-libs</li>
+<li>llvm21</li>
+<li>llvm21-libs</li>
+<li>lm_sensors</li>
+<li>lmdb</li>
+<li>logrotate</li>
+<li>love</li>
+<li>lsb-release</li>
+<li>lsof</li>
+<li>lsscsi</li>
+<li>lua</li>
+<li>lua51</li>
+<li>lua54</li>
+<li>luajit</li>
+<li>lutris</li>
+<li>lv2</li>
+<li>lvm2</li>
+<li>lz4</li>
+<li>lzo</li>
+<li>m4</li>
+<li>mailcap</li>
+<li>make</li>
+<li>man-db</li>
+<li>man-pages</li>
+<li>mangohud</li>
+<li>mari0</li>
+<li>mbedtls</li>
+<li>mbedtls2</li>
+<li>md4c</li>
+<li>mdadm</li>
+<li>media-player-info</li>
+<li>meld</li>
+<li>mesa</li>
+<li>mesa-utils</li>
+<li>meson</li>
+<li>micro</li>
+<li>milou</li>
+<li>miniupnpc</li>
+<li>minizip</li>
+<li>mjpegtools</li>
+<li>mkinitcpio</li>
+<li>mkinitcpio-busybox</li>
+<li>mlt</li>
+<li>mobile-broadband-provider-info</li>
+<li>modemmanager</li>
+<li>modemmanager-qt</li>
+<li>mpdecimal</li>
+<li>mpfr</li>
+<li>mpg123</li>
+<li>mpv</li>
+<li>mpvqt</li>
+<li>mtdev</li>
+<li>mtools</li>
+<li>mujs</li>
+<li>muparser</li>
+<li>mypaint-brushes</li>
+<li>mypaint-brushes1</li>
+<li>nano</li>
+<li>nano-syntax-highlighting</li>
+<li>ncurses</li>
+<li>neon</li>
+<li>netctl</li>
+<li>nettle</li>
+<li>networkmanager</li>
+<li>networkmanager-openvpn</li>
+<li>networkmanager-qt</li>
+<li>networkmanager-vpn-plugin-openvpn</li>
+<li>nfs-utils</li>
+<li>nfsidmap</li>
+<li>nftables</li>
+<li>nilfs-utils</li>
+<li>ninja</li>
+<li>nlohmann-json</li>
+<li>noctalia-qs</li>
+<li>noctalia-shell</li>
+<li>node-gyp</li>
+<li>nodejs</li>
+<li>nodejs-nopt</li>
+<li>noto-color-emoji-fontconfig</li>
+<li>noto-fonts</li>
+<li>noto-fonts-cjk</li>
+<li>noto-fonts-emoji</li>
+<li>npm</li>
+<li>npth</li>
+<li>nspr</li>
+<li>nss</li>
+<li>nss-mdns</li>
+<li>ntfs-3g</li>
+<li>ntp</li>
+<li>numactl</li>
+<li>obs-studio-browser</li>
+<li>ocean-sound-theme</li>
+<li>ocl-icd</li>
+<li>octopi</li>
+<li>oh-my-zsh-git</li>
+<li>okular</li>
+<li>onetbb</li>
+<li>oniguruma</li>
+<li>openal</li>
+<li>opencl-mesa</li>
+<li>opencode</li>
+<li>opencore-amr</li>
+<li>opencv</li>
+<li>openexr</li>
+<li>openh264</li>
+<li>openjpeg2</li>
+<li>openjph</li>
+<li>openssh</li>
+<li>openssl</li>
+<li>openstego</li>
+<li>opentimelineio</li>
+<li>openvpn</li>
+<li>openxr</li>
+<li>opus</li>
+<li>opusfile</li>
+<li>orc</li>
+<li>ostree</li>
+<li>p11-kit</li>
+<li>pacman</li>
+<li>pacman-contrib</li>
+<li>pacman-mirrorlist</li>
+<li>pacutils</li>
+<li>pahole</li>
+<li>pam</li>
+<li>pambase</li>
+<li>pango</li>
+<li>pangomm</li>
+<li>parallel</li>
+<li>parted</li>
+<li>partitionmanager</li>
+<li>paru</li>
+<li>passim</li>
+<li>patch</li>
+<li>patchelf</li>
+<li>pavucontrol-qt</li>
+<li>pciutils</li>
+<li>pcre</li>
+<li>pcre2</li>
+<li>pcsclite</li>
+<li>peg</li>
+<li>perl</li>
+<li>perl-class-inspector</li>
+<li>perl-clone</li>
+<li>perl-encode-locale</li>
+<li>perl-error</li>
+<li>perl-file-listing</li>
+<li>perl-file-sharedir</li>
+<li>perl-html-parser</li>
+<li>perl-html-tagset</li>
+<li>perl-http-cookiejar</li>
+<li>perl-http-cookies</li>
+<li>perl-http-daemon</li>
+<li>perl-http-date</li>
+<li>perl-http-message</li>
+<li>perl-http-negotiate</li>
+<li>perl-io-html</li>
+<li>perl-json</li>
+<li>perl-libwww</li>
+<li>perl-lwp-mediatypes</li>
+<li>perl-mailtools</li>
+<li>perl-net-http</li>
+<li>perl-timedate</li>
+<li>perl-try-tiny</li>
+<li>perl-uri</li>
+<li>perl-www-robotrules</li>
+<li>perl-xml-parser</li>
+<li>perl-xml-writer</li>
+<li>phonon-qt6</li>
+<li>phonon-qt6-vlc</li>
+<li>pinentry</li>
+<li>pipewire</li>
+<li>pipewire-alsa</li>
+<li>pipewire-audio</li>
+<li>pipewire-pulse</li>
+<li>pixman</li>
+<li>pkcs11-helper</li>
+<li>pkgconf</li>
+<li>pkgfile</li>
+<li>plasma-activities</li>
+<li>plasma-activities-stats</li>
+<li>plasma-browser-integration</li>
+<li>plasma-desktop</li>
+<li>plasma-firewall</li>
+<li>plasma-integration</li>
+<li>plasma-nm</li>
+<li>plasma-pa</li>
+<li>plasma-systemmonitor</li>
+<li>plasma-thunderbolt</li>
+<li>plasma-workspace</li>
+<li>plasma5support</li>
+<li>playerctl</li>
+<li>plocate</li>
+<li>plymouth</li>
+<li>plymouth-kcm</li>
+<li>polkit</li>
+<li>polkit-kde-agent</li>
+<li>polkit-qt6</li>
+<li>poppler</li>
+<li>poppler-data</li>
+<li>poppler-glib</li>
+<li>poppler-qt5</li>
+<li>poppler-qt6</li>
+<li>popt</li>
+<li>portaudio</li>
+<li>portmidi</li>
+<li>portsmf</li>
+<li>power-profiles-daemon</li>
+<li>powerdevil</li>
+<li>powerline-fonts</li>
+<li>ppp</li>
+<li>prison</li>
+<li>procps-ng</li>
+<li>projectm</li>
+<li>protobuf</li>
+<li>protobuf-c</li>
+<li>proton-ge-custom-bin</li>
+<li>psmisc</li>
+<li>pugixml</li>
+<li>pulseaudio-qt</li>
+<li>purpose</li>
+<li>pv</li>
+<li>pyside6</li>
+<li>python</li>
+<li>python-aaf2</li>
+<li>python-annotated-types</li>
+<li>python-antlr4</li>
+<li>python-attrs</li>
+<li>python-autocommand</li>
+<li>python-beautifulsoup4</li>
+<li>python-cairo</li>
+<li>python-certifi</li>
+<li>python-cffi</li>
+<li>python-charset-normalizer</li>
+<li>python-contourpy</li>
+<li>python-cryptography</li>
+<li>python-cycler</li>
+<li>python-dateutil</li>
+<li>python-dbus</li>
+<li>python-defusedxml</li>
+<li>python-distro</li>
+<li>python-evdev</li>
+<li>python-filelock</li>
+<li>python-fonttools</li>
+<li>python-gobject</li>
+<li>python-idna</li>
+<li>python-injector</li>
+<li>python-jaraco.collections</li>
+<li>python-jaraco.context</li>
+<li>python-jaraco.functools</li>
+<li>python-jaraco.text</li>
+<li>python-jinja</li>
+<li>python-kiwisolver</li>
+<li>python-lxml</li>
+<li>python-mako</li>
+<li>python-markdown</li>
+<li>python-markupsafe</li>
+<li>python-matplotlib</li>
+<li>python-moddb</li>
+<li>python-more-itertools</li>
+<li>python-mutagen</li>
+<li>python-numpy</li>
+<li>python-orjson</li>
+<li>python-packaging</li>
+<li>python-pid</li>
+<li>python-pillow</li>
+<li>python-pip</li>
+<li>python-pkg_resources</li>
+<li>python-platformdirs</li>
+<li>python-psutil</li>
+<li>python-pyaml</li>
+<li>python-pycparser</li>
+<li>python-pydantic</li>
+<li>python-pydantic-core</li>
+<li>python-pyparsing</li>
+<li>python-pypubsub</li>
+<li>python-pyxdg</li>
+<li>python-requests</li>
+<li>python-semantic-version</li>
+<li>python-setproctitle</li>
+<li>python-setuptools</li>
+<li>python-shtab</li>
+<li>python-six</li>
+<li>python-soupsieve</li>
+<li>python-systemd</li>
+<li>python-tomlkit</li>
+<li>python-tqdm</li>
+<li>python-transitions</li>
+<li>python-typeguard</li>
+<li>python-typing-inspection</li>
+<li>python-typing_extensions</li>
+<li>python-urllib3</li>
+<li>python-watchdog</li>
+<li>python-wheel</li>
+<li>python-wxpython</li>
+<li>python-yaml</li>
+<li>qca-qt6</li>
+<li>qcomicbook</li>
+<li>qcoro</li>
+<li>qhull</li>
+<li>qqc2-breeze-style</li>
+<li>qqc2-desktop-style</li>
+<li>qrcodegencpp-cmake</li>
+<li>qrencode</li>
+<li>qt-sudo</li>
+<li>qt5-base</li>
+<li>qt5-declarative</li>
+<li>qt5-svg</li>
+<li>qt5-translations</li>
+<li>qt5-wayland</li>
+<li>qt5-x11extras</li>
+<li>qt6-5compat</li>
+<li>qt6-base</li>
+<li>qt6-connectivity</li>
+<li>qt6-declarative</li>
+<li>qt6-imageformats</li>
+<li>qt6-location</li>
+<li>qt6-multimedia</li>
+<li>qt6-multimedia-ffmpeg</li>
+<li>qt6-networkauth</li>
+<li>qt6-positioning</li>
+<li>qt6-quick3d</li>
+<li>qt6-quicktimeline</li>
+<li>qt6-sensors</li>
+<li>qt6-shadertools</li>
+<li>qt6-speech</li>
+<li>qt6-svg</li>
+<li>qt6-tools</li>
+<li>qt6-translations</li>
+<li>qt6-virtualkeyboard</li>
+<li>qt6-wayland</li>
+<li>qt6-webchannel</li>
+<li>qt6-webengine</li>
+<li>qt6-websockets</li>
+<li>qtermwidget</li>
+<li>r-quick-share-git</li>
+<li>ranger</li>
+<li>raptor</li>
+<li>rar</li>
+<li>rate-mirrors</li>
+<li>rav1e</li>
+<li>re2</li>
+<li>readline</li>
+<li>rebuild-detector</li>
+<li>refind</li>
+<li>refind-btrfs</li>
+<li>reflector</li>
+<li>resvg</li>
+<li>rhash</li>
+<li>ripgrep</li>
+<li>ripgrep-all</li>
+<li>rnnoise</li>
+<li>rofi</li>
+<li>rpcbind</li>
+<li>rsync</li>
+<li>rtkit</li>
+<li>rtmpdump</li>
+<li>rubberband</li>
+<li>run-parts</li>
+<li>rustup</li>
+<li>s-nail</li>
+<li>sbc</li>
+<li>scx-manager</li>
+<li>scx-scheds</li>
+<li>scx-tools</li>
+<li>sd</li>
+<li>sdbus-cpp</li>
+<li>sddm</li>
+<li>sddm-kcm</li>
+<li>sdl12-compat</li>
+<li>sdl2-compat</li>
+<li>sdl3</li>
+<li>sdl_image</li>
+<li>seatd</li>
+<li>sed</li>
+<li>semver</li>
+<li>serd</li>
+<li>sfml</li>
+<li>sg3_utils</li>
+<li>shaderc</li>
+<li>shadow</li>
+<li>shared-mime-info</li>
+<li>shiboken6</li>
+<li>signon-kwallet-extension</li>
+<li>signon-plugin-oauth2</li>
+<li>signon-ui</li>
+<li>signond</li>
+<li>simde</li>
+<li>simdjson</li>
+<li>slang</li>
+<li>slurp</li>
+<li>smartmontools</li>
+<li>smbclient</li>
+<li>snapper</li>
+<li>snappy</li>
+<li>sndio</li>
+<li>socat</li>
+<li>sof-firmware</li>
+<li>solid</li>
+<li>songrec</li>
+<li>sonnet</li>
+<li>sord</li>
+<li>sound-theme-freedesktop</li>
+<li>soundtouch</li>
+<li>source-highlight</li>
+<li>spandsp</li>
+<li>spdlog</li>
+<li>spectacle</li>
+<li>speex</li>
+<li>speexdsp</li>
+<li>spirv-llvm-translator</li>
+<li>spirv-tools</li>
+<li>sqlite</li>
+<li>squashfuse</li>
+<li>sratom</li>
+<li>srt</li>
+<li>starship</li>
+<li>startup-notification</li>
+<li>steam</li>
+<li>steam-devices</li>
+<li>strawberry</li>
+<li>sudo</li>
+<li>suil</li>
+<li>suitesparse</li>
+<li>svt-av1</li>
+<li>svt-hevc</li>
+<li>swappy</li>
+<li>syndication</li>
+<li>syntax-highlighting</li>
+<li>sysfsutils</li>
+<li>systemd</li>
+<li>systemd-libs</li>
+<li>systemd-resolvconf</li>
+<li>systemd-sysvcompat</li>
+<li>systemsettings</li>
+<li>taglib</li>
+<li>talloc</li>
+<li>tar</li>
+<li>tcl</li>
+<li>tdb</li>
+<li>tealdeer</li>
+<li>tesseract</li>
+<li>tesseract-data-eng</li>
+<li>tesseract-data-osd</li>
+<li>tevent</li>
+<li>texinfo</li>
+<li>thin-provisioning-tools</li>
+<li>threadweaver</li>
+<li>thunar</li>
+<li>timeshift</li>
+<li>tinysparql</li>
+<li>tinyxml2</li>
+<li>tk</li>
+<li>tomlplusplus</li>
+<li>touchegg</li>
+<li>tpm2-tss</li>
+<li>translate-shell</li>
+<li>transmission-qt</li>
+<li>trash-cli</li>
+<li>tslib</li>
+<li>ttf-bitstream-vera</li>
+<li>ttf-cascadia-code-nerd</li>
+<li>ttf-dejavu</li>
+<li>ttf-fantasque-nerd</li>
+<li>ttf-fira-sans</li>
+<li>ttf-hack</li>
+<li>ttf-jetbrains-mono-nerd</li>
+<li>ttf-liberation</li>
+<li>ttf-meslo-nerd</li>
+<li>ttf-opensans</li>
+<li>ttf-twemoji</li>
+<li>twolame</li>
+<li>tzdata</li>
+<li>uchardet</li>
+<li>udisks2</li>
+<li>ufw</li>
+<li>unzip</li>
+<li>upower</li>
+<li>usb_modeswitch</li>
+<li>usbmuxd</li>
+<li>usbutils</li>
+<li>util-linux</li>
+<li>util-linux-libs</li>
+<li>uv</li>
+<li>v4l-utils</li>
+<li>vamp-plugin-sdk</li>
+<li>vapoursynth</li>
+<li>verdict</li>
+<li>vid.stab</li>
+<li>vim</li>
+<li>vim-runtime</li>
+<li>vlc</li>
+<li>vlc-cli</li>
+<li>vlc-gui-qt</li>
+<li>vlc-luajit</li>
+<li>vlc-plugin-a52dec</li>
+<li>vlc-plugin-aalib</li>
+<li>vlc-plugin-alsa</li>
+<li>vlc-plugin-aom</li>
+<li>vlc-plugin-archive</li>
+<li>vlc-plugin-aribb24</li>
+<li>vlc-plugin-aribb25</li>
+<li>vlc-plugin-ass</li>
+<li>vlc-plugin-avahi</li>
+<li>vlc-plugin-bluray</li>
+<li>vlc-plugin-caca</li>
+<li>vlc-plugin-cddb</li>
+<li>vlc-plugin-chromecast</li>
+<li>vlc-plugin-dav1d</li>
+<li>vlc-plugin-dbus</li>
+<li>vlc-plugin-dbus-screensaver</li>
+<li>vlc-plugin-dca</li>
+<li>vlc-plugin-dvb</li>
+<li>vlc-plugin-dvd</li>
+<li>vlc-plugin-faad2</li>
+<li>vlc-plugin-ffmpeg</li>
+<li>vlc-plugin-firewire</li>
+<li>vlc-plugin-flac</li>
+<li>vlc-plugin-fluidsynth</li>
+<li>vlc-plugin-freetype</li>
+<li>vlc-plugin-gme</li>
+<li>vlc-plugin-gnutls</li>
+<li>vlc-plugin-gstreamer</li>
+<li>vlc-plugin-inflate</li>
+<li>vlc-plugin-jack</li>
+<li>vlc-plugin-journal</li>
+<li>vlc-plugin-jpeg</li>
+<li>vlc-plugin-kate</li>
+<li>vlc-plugin-kwallet</li>
+<li>vlc-plugin-libsecret</li>
+<li>vlc-plugin-lirc</li>
+<li>vlc-plugin-live555</li>
+<li>vlc-plugin-luajit</li>
+<li>vlc-plugin-mad</li>
+<li>vlc-plugin-matroska</li>
+<li>vlc-plugin-mdns</li>
+<li>vlc-plugin-modplug</li>
+<li>vlc-plugin-mpeg2</li>
+<li>vlc-plugin-mpg123</li>
+<li>vlc-plugin-mtp</li>
+<li>vlc-plugin-musepack</li>
+<li>vlc-plugin-nfs</li>
+<li>vlc-plugin-notify</li>
+<li>vlc-plugin-ogg</li>
+<li>vlc-plugin-opus</li>
+<li>vlc-plugin-png</li>
+<li>vlc-plugin-pulse</li>
+<li>vlc-plugin-quicksync</li>
+<li>vlc-plugin-samplerate</li>
+<li>vlc-plugin-sdl</li>
+<li>vlc-plugin-sftp</li>
+<li>vlc-plugin-shout</li>
+<li>vlc-plugin-smb</li>
+<li>vlc-plugin-soxr</li>
+<li>vlc-plugin-speex</li>
+<li>vlc-plugin-srt</li>
+<li>vlc-plugin-svg</li>
+<li>vlc-plugin-tag</li>
+<li>vlc-plugin-theora</li>
+<li>vlc-plugin-twolame</li>
+<li>vlc-plugin-udev</li>
+<li>vlc-plugin-upnp</li>
+<li>vlc-plugin-vorbis</li>
+<li>vlc-plugin-vpx</li>
+<li>vlc-plugin-x264</li>
+<li>vlc-plugin-x265</li>
+<li>vlc-plugin-xml</li>
+<li>vlc-plugin-zvbi</li>
+<li>vlc-plugins-all</li>
+<li>vlc-plugins-base</li>
+<li>vlc-plugins-extra</li>
+<li>vlc-plugins-video-output</li>
+<li>vlc-plugins-visualization</li>
+<li>vmaf</li>
+<li>volume_key</li>
+<li>vte-common</li>
+<li>vte3</li>
+<li>vulkan-icd-loader</li>
+<li>vulkan-intel</li>
+<li>vulkan-mesa-implicit-layers</li>
+<li>vulkan-radeon</li>
+<li>vulkan-tools</li>
+<li>wavpack</li>
+<li>wayland</li>
+<li>wayland-protocols</li>
+<li>wayland-utils</li>
+<li>webkit2gtk-4.1</li>
+<li>webrtc-audio-processing-1</li>
+<li>wev</li>
+<li>wf-recorder</li>
+<li>wget</li>
+<li>which</li>
+<li>wildmidi</li>
+<li>wine-staging</li>
+<li>winetricks</li>
+<li>wireless-regdb</li>
+<li>wireplumber</li>
+<li>wl-clipboard</li>
+<li>wlogout</li>
+<li>wlr-randr</li>
+<li>woff2</li>
+<li>wpa_supplicant</li>
+<li>wtype</li>
+<li>wxwidgets-common</li>
+<li>wxwidgets-gtk3</li>
+<li>x264</li>
+<li>x265</li>
+<li>xapp</li>
+<li>xapp-symbolic-icons</li>
+<li>xcb-imdkit</li>
+<li>xcb-proto</li>
+<li>xcb-util</li>
+<li>xcb-util-cursor</li>
+<li>xcb-util-errors</li>
+<li>xcb-util-image</li>
+<li>xcb-util-keysyms</li>
+<li>xcb-util-renderutil</li>
+<li>xcb-util-wm</li>
+<li>xclip</li>
+<li>xdg-dbus-proxy</li>
+<li>xdg-desktop-portal</li>
+<li>xdg-desktop-portal-gtk</li>
+<li>xdg-desktop-portal-hyprland</li>
+<li>xdg-desktop-portal-kde</li>
+<li>xdg-user-dirs</li>
+<li>xdg-utils</li>
+<li>xf86-input-libinput</li>
+<li>xfconf</li>
+<li>xfsprogs</li>
+<li>xkeyboard-config</li>
+<li>xl2tpd</li>
+<li>xorg-fonts-encodings</li>
+<li>xorg-server</li>
+<li>xorg-server-common</li>
+<li>xorg-setxkbmap</li>
+<li>xorg-xauth</li>
+<li>xorg-xdpyinfo</li>
+<li>xorg-xhost</li>
+<li>xorg-xinit</li>
+<li>xorg-xinput</li>
+<li>xorg-xkbcomp</li>
+<li>xorg-xkill</li>
+<li>xorg-xmessage</li>
+<li>xorg-xmodmap</li>
+<li>xorg-xprop</li>
+<li>xorg-xrandr</li>
+<li>xorg-xrdb</li>
+<li>xorg-xset</li>
+<li>xorg-xwayland</li>
+<li>xorgproto</li>
+<li>xsettingsd</li>
+<li>xvidcore</li>
+<li>xxhash</li>
+<li>xz</li>
+<li>yay-bin</li>
+<li>ydotool</li>
+<li>youtube-dl-gui-bin</li>
+<li>yyjson</li>
+<li>zbar</li>
+<li>zen-browser-bin</li>
+<li>zenity</li>
+<li>zeromq</li>
+<li>zimg</li>
+<li>zint</li>
+<li>zix</li>
+<li>zlib-ng</li>
+<li>zlib-ng-compat</li>
+<li>zola</li>
+<li>zram-generator</li>
+<li>zsh</li>
+<li>zsh-autosuggestions</li>
+<li>zsh-completions</li>
+<li>zsh-history-substring-search</li>
+<li>zsh-syntax-highlighting</li>
+<li>zsh-theme-powerlevel10k</li>
+<li>zstd</li>
+<li>zvbi</li>
+<li>zxing-cpp</li>
+</ul>
+
+    </main>
+
+    <footer class="system-bar">
+
+        <div class="system-tray">
+            <div class="task-item">
+                <button class="task-button" onclick="toggleMenu(event, 'menu-contact')"><img src="/assets/icons/at.svg" class="social-menu-icon" style="width:54px; height=54px;"></button>
+                <div id="menu-contact" class="popup-menu">
+                    <a href="https://keys.openpgp.org/vks/v1/by-fingerprint/A9607F121BEBFCCAE8E821EBF1D7400B08418266"><img class="menu-icon" src="/assets/icons/gnuprivacyguard.svg"><span>GPG⤓</span></a>
+                    <a href="https://discord.com/users/664500374983540756"><img class="menu-icon" src="/assets/icons/discord.svg"><span>Discord↗</span></a>
+                    <a href="mailto:umhendek@gmail.com"><img src="/assets/icons/gmail.svg" class="menu-icon"> Email↗</a>
+                    <a href="tel:13065024835"><img src="/assets/icons/phone.svg" class="menu-icon"> Phone↗</a>
+                </div>
+            </div>
+
+            <div class="task-item">
+                <button class="task-button" onclick="toggleMenu(event, 'menu-dev')"><img src="/assets/icons/code.svg" class="social-menu-icon" style="width:54px; height=54px;"></button>
+                <div id="menu-dev" class="popup-menu">
+                    <a href="https://github.com/kvnhndrsn"><img src="/assets/icons/github.svg" class="menu-icon" > GitHub↗</a>
+                    <a href="https://codeberg.org/kvnhndrsn"><img src="/assets/icons/codeberg.svg" class="menu-icon"> Codeberg↗</a>
+
+                </div>
+            </div>
+
+            <div class="task-item">
+                <button class="task-button" onclick="toggleMenu(event, 'menu-social')"><img src="/assets/icons/hashtag.svg" class="social-menu-icon" style="width:54px; height=54px;"></button>
+                <div id="menu-social" class="popup-menu">
+                    <s style="opacity:60%;">
+                    <a href="https://www.youtube.com/kevinhenderson"><img src="/assets/icons/youtube.svg" class="menu-icon"> YouTube↗</a>
+                    </s>
+                    <a href="https://www.instagram.com/heavenkenderson"><img src="/assets/icons/instagram.svg" class="menu-icon"> Instagram↗</a>
+                    <s style="opacity:60%;">
+                    <a href="https://www.facebook.com/heaven.kenderson.2025"><img src="/assets/icons/facebook.svg" class="menu-icon"> Facebook↗</a>
+                    </s>
+                    <a href="https://www.linkedin.com/in/kevin-henderson-9354a0a6/"><img src="/assets/icons/linkedin.svg" class="menu-icon"> LinkedIn↗</a>
+                </div>
+            </div>
+
+            <div class="task-item">
+                <button class="task-button" onclick="toggleMenu(event, 'menu-gaming')"><img src="/assets/icons/queen.svg" class="social-menu-icon" style="width:54px; height=54px;"></button>
+                <div id="menu-gaming" class="popup-menu right-aligned">
+                    <a href="https://steamcommunity.com/profiles/76561198047742285/"><img src="/assets/icons/steam.svg" class="menu-icon"> Steam↗</a>
+                    <a href="https://retroachievements.org/user/turbomoses420"><img src="/assets/icons/retroachievements.svg" class="menu-icon"> Retro<br>Achievements↗</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-item">
+            <button class="task-button" onclick="toggleMenu(event, 'menu-start')"><img src="/assets/icons/hamburger-menu.svg" class="menu-icon" style="width:96px; height=96px;"></button>
+            <div id="menu-start" class="popup-menu right-aligned">
+                <a href="/">↙Home</a>
+                <a href="/projects">↙Projects</a>
+                <a href="/timelapses">↙Timelapses</a>
+                <a href="/about">↙About</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu(event, menuId) {
+            event.stopPropagation();
+            const targetMenu = document.getElementById(menuId);
+            const isAlreadyOpen = targetMenu.style.display === 'flex';
+
+            // Close all menus
+            document.querySelectorAll('.popup-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
+
+            // Open clicked menu
+            targetMenu.style.display = isAlreadyOpen ? 'none' : 'flex';
+        }
+
+        // Global click listener to close menus when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.task-button')) {
+                document.querySelectorAll('.popup-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                });
+            }
+        };
+    </script>
+
+</body>
+</html>

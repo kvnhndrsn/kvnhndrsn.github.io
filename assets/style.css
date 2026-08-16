@@ -1,0 +1,349 @@
+/* --- 1. VARIABLES & RESET --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg-color: rgb(235, 236, 242);
+    --text-color: #333;
+    --header-bg: rgba(255, 255, 255, 0.7);
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --border-color: rgba(0, 0, 0, 0.1);
+    --hover-bg: rgba(0, 0, 0, 0.05);
+    --bg-image: url("/assets/wallpapers/back-light.png");
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --header-bg: rgba(20, 20, 20, 0.7);
+    --card-bg: rgba(30, 30, 30, 0.95);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --hover-bg: rgba(255, 255, 255, 0.1);
+    --bg-image: url("/assets/wallpapers/back-dark.png");
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-color) var(--bg-image) fixed;
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+/* --- 2. HEADER & NAV --- */
+.page-header {
+    position: sticky; top: 0; z-index: 1000;
+    background: var(--header-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-container {
+    max-width: 1100px; margin: 0 auto; padding: 0.3rem 0.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+}
+
+.nav-right { display: flex; align-items: center; gap: 0.1rem; }
+
+/* --- 3. UNIVERSAL DROPDOWN SYSTEM --- */
+.dropdown { position: relative; display: inline-block; }
+
+.dropdown-trigger {
+    background: transparent; border: none; cursor: pointer;
+    color: var(--text-color); font-family: inherit; font-size: 0.9rem;
+    padding: 0.5rem 0.8rem; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+}
+
+.dropdown-trigger:hover,
+.main-nav-submenu > a:hover { background: var(--hover-bg); }
+
+/* The Submenu Container */
+.submenu {
+    position: absolute; top: 100%; margin-top: 5px;
+    background: var(--card-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    z-index: 1010;
+
+    /* Brave/Chrome Animation Engine */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    pointer-events: none;
+}
+
+/* --- VERTICAL SOCIAL LIST --- */
+.submenu.social-list {
+    right: 0;
+    min-width: 180px; /* Wider to fit text labels */
+    padding: 0.5rem;
+    display: flex !important;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.submenu.social-list a {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Space between icon and text */
+    padding: 0.7rem 1rem;
+    width: 100%;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.submenu.social-list a:hover {
+    background: var(--hover-bg);
+    border-radius: 8px;
+}
+
+.submenu.social-list .social-icon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.8;
+}
+
+/* Hover / keyboard focus — direct child only so nested dropdowns (e.g. Notes) stay independent */
+.dropdown:hover > .submenu,
+.dropdown:focus-within > .submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Invisible bridge to prevent menu closing on gap-cross */
+.dropdown::after {
+    content: ""; position: absolute; top: 100%; left: 0; width: 100%; height: 10px;
+}
+
+/* Main nav (avatar) — same panel pattern as other dropdowns */
+.nav-main-dropdown { align-self: center; }
+
+.nav-menu-trigger {
+    padding: 0.25rem;
+    border-radius: 10px;
+}
+
+.main-nav-submenu {
+    left: 0;
+    min-width: 220px;
+}
+
+.main-nav-submenu .dropdown {
+    display: block;
+    width: 100%;
+}
+
+.main-nav-submenu .dropdown .dropdown-trigger {
+    width: 100%;
+    justify-content: flex-start;
+}
+
+/* Wide screens: horizontal bar in the header; narrow: avatar dropdown only */
+@media (min-width: 851px) {
+    .nav-container > .nav-main-dropdown {
+        display: flex;
+        flex: 1;
+        min-width: 0;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .nav-main-dropdown.dropdown::after {
+        display: none;
+    }
+
+    .nav-main-dropdown > .main-nav-submenu {
+        position: static !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        margin: 0 !important;
+        z-index: auto;
+
+        display: flex !important;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        flex: 1;
+        min-width: 0;
+
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+    }
+
+    .main-nav-submenu > a,
+    .main-nav-submenu .dropdown .dropdown-trigger {
+        padding: 0.5rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+
+    .main-nav-submenu .dropdown {
+        display: inline-block;
+        width: auto;
+    }
+
+    .main-nav-submenu .dropdown .dropdown-trigger {
+        width: auto;
+        justify-content: center;
+    }
+}
+
+/* Nested flyout above sibling links */
+.submenu .submenu {
+    z-index: 1020;
+}
+
+/* Submenu Variants */
+.submenu:not(.icon-grid) { left: 0; min-width: 160px; padding: 0.5rem 0; }
+.submenu.icon-grid {
+    right: 0; padding: 8px;
+    display: flex !important;
+    flex-direction: column;
+    gap: 4px;
+    min-width: max-content;
+    align-items: stretch;
+}
+
+/* Submenu Links */
+.submenu a {
+    text-decoration: none; color: var(--text-color);
+    transition: background 0.2s ease; display: flex; align-items: center;
+}
+.submenu:not(.icon-grid) a { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+.submenu.icon-grid a {
+    min-height: 40px;
+    padding: 0 0.75rem;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+.submenu a:hover { background: var(--hover-bg); border-radius: 8px; }
+
+/* --- 4. ICONS & TOGGLES --- */
+.social-icon { width: 20px; height: 20px; opacity: 0.7; transition: var(--transition); }
+.social-icon:hover { opacity: 1; transform: scale(1.1); }
+[data-theme="dark"] .social-icon { filter: brightness(0) invert(1); }
+
+.theme-btn {
+    background: transparent; border: 1px solid var(--border-color);
+    width: 38px; height: 38px; border-radius: 10px; cursor: pointer;
+    color: var(--text-color); font-size: 1.1rem; transition: var(--transition);
+}
+.theme-btn:hover { background: var(--hover-bg); }
+
+/* --- 5. MOBILE & UTILITY --- */
+.avatar { width: 52px; height: 52px; border-radius: 3px; cursor: pointer; display: block; }
+
+main { max-width: 75ch; margin: 2rem auto; padding: 0 1.1rem; min-height: 80vh; }
+.page-footer { text-align: center; padding: 3rem; opacity: 0.6; font-size: 0.8rem; }
+
+
+
+
+
+
+/*  */
+/*  */
+/*  */
+/*  */
+/*  */
+/* Wallpaper system */
+body.wallpaper-active {
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+}
+
+/* Optional readability overlay */
+body.wallpaper-active::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.wallpaper-picker {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    padding-top: 6px;
+}
+
+.wp-option {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    background: #ccc;
+}
+
+.wp-option img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.wp-option:hover {
+    transform: scale(1.05);
+}
+
+.wp-option.active {
+    border: 2px solid #4da3ff;
+}
+
+/* Wallpaper behavior */
+body.wallpaper-active {
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+}
+
+body.wallpaper-active::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.icon-thumb {
+    width: auto !important;
+    height: auto !important;
+    max-width: 70% !important;
+    max-height: 70% !important;
+    object-fit: contain !important;
+    display: block;
+    margin: auto;
+}
+
+/*  */
+/*  */
+/*  */
+/*  */
+/*  */

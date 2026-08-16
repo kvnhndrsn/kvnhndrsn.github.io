@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+
+
+
+
+
+
+
+
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon">
+
+<title>Kevin</title>
+
+<meta name="description" content="1-2 sentences about the site (optional)">
+
+<meta property="og:title" content="Kevin">
+<meta property="og:type" content="website">
+<meta property="og:url" content="kevin.nekoweb.org/timelapses/petunias/">
+<meta property="og:image" content="/assets/avatar.png">
+<meta property="og:description" content="1-2 sentences about the site (optional)">
+
+<link rel="canonical" href="kevin.nekoweb.org/timelapses/petunias/">
+
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter&display=swap">
+
+<link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+
+<link rel="stylesheet" href="/assets/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-color: #000 !important;
+            --text-color: #fff !important;
+            --accent-color: #555 !important;
+            --border-color: #333 !important;
+           --bar-bg: rgba(10, 10, 10, 0.45);
+            font-size: 22px;
+        }
+
+        html, body {
+            background-color: #000 !important;
+            background-image: url("/assets/wallpapers/back2-dark.png") !important;
+            background-attachment: fixed !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+        }
+
+        body {
+            color: var(--text-color);
+            font-family: sans-serif;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 72px; /* Space for fixed taskbar */
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem 5vw;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* --- SYSTEM BAR (TASKBAR) --- */
+        .system-bar {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 72px;
+            background: var(--bar-bg);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 10000;
+            overflow: visible; /* Required for sub-menus */
+        }
+
+        .system-tray {
+            display: flex;
+            align-items: center;
+            gap: 1.0vw;
+        }
+
+        .task-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .task-button {
+            background: transparent;
+            border: none;
+            color: #eee;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.2s;
+        }
+
+        .task-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- POPUP MENUS --- */
+        .popup-menu {
+            position: absolute;
+            bottom: 72px;
+            left: 0;
+            background: #111111dd;
+            border: 1px solid #444;
+            display: none;
+            flex-direction: column;
+            min-width: 300px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
+            overflow: visible !important;
+        }
+
+        .popup-menu.right-aligned {
+            left: auto;
+            right: 0;
+        }
+
+        .popup-menu a, .has-submenu > span {
+            padding: 26px 14px;
+            color: #ccc;
+            text-decoration: none;
+            font-size: 1.8rem;
+            border-bottom: 1px solid #222;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .popup-menu a:hover, .has-submenu:hover > span {
+            background: #222;
+            color: #fff;
+        }
+
+        .menu-icon {
+            width: 54px;
+            height: 54px;
+            filter: invert(1);
+            opacity: 0.7;
+        }
+
+        .social-menu-icon {
+            width: 26px;
+            height: 26px;
+            filter: invert(1);
+            opacity: 0.7;
+        }
+
+        /* --- NESTED SUB-MENUS --- */
+        .has-submenu {
+            position: relative;
+        }
+
+        .submenu {
+            position: absolute;
+            top: 0;
+            right: 100%; /* Fly out to the LEFT */
+            background: #181818;
+            border: 1px solid #444;
+            display: none;
+            flex-direction: column;
+            min-width: 180px;
+            z-index: 10001;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+        }
+
+        .has-submenu:hover > .submenu {
+            display: flex;
+        }
+
+        .has-submenu > span::after {
+            content: " <";
+            margin-left: auto;
+            opacity: 0.5;
+        }
+
+    </style>
+</head>
+<body>
+
+    <main>
+        <h5>Petunias</h5>
+<p><video controls preload="metadata" loop autoplay width="90%"> <source src="/timelapses/PetuniaLapse2.webm" type="video/mp4"> </video></p>
+<p><video controls preload="metadata" loop autoplay width="90%"> <source src="/timelapses/12daysofPetunias.webm" type="video/mp4"> </video></p>
+<p><video controls preload="metadata" loop autoplay width="90%"> <source src="/timelapses/petuniasfast3.webm" type="video/mp4"> </video></p>
+
+    </main>
+
+    <footer class="system-bar">
+
+        <div class="system-tray">
+            <div class="task-item">
+                <button class="task-button" onclick="toggleMenu(event, 'menu-contact')"><img src="/assets/icons/at.svg" class="social-menu-icon" style="width:54px; height=54px;"></button>
+                <div id="menu-contact" class="popup-menu">
+                    <a href="https://keys.openpgp.org/vks/v1/by-fingerprint/A9607F121BEBFCCAE8E821EBF1D7400B08418266"><img class="menu-icon" src="/assets/icons/gnuprivacyguard.svg"><span>GPG⤓</span></a>
+                    <a href="https://discord.com/users/664500374983540756"><img class="menu-icon" src="/assets/icons/discord.svg"><span>Discord↗</span></a>
+                    <a href="mailto:umhendek@gmail.com"><img src="/assets/icons/gmail.svg" class="menu-icon"> Email↗</a>
+                    <a href="tel:13065024835"><img src="/assets/icons/phone.svg" class="menu-icon"> Phone↗</a>
+                </div>
+            </div>
+
+            <div class="task-item">
+                <button class="task-button" onclick="toggleMenu(event, 'menu-dev')"><img src="/assets/icons/code.svg" class="social-menu-icon" style="width:54px; height=54px;"></button>
+                <div id="menu-dev" class="popup-menu">
+                    <a href="https://github.com/kvnhndrsn"><img src="/assets/icons/github.svg" class="menu-icon" > GitHub↗</a>
+                    <a href="https://codeberg.org/kvnhndrsn"><img src="/assets/icons/codeberg.svg" class="menu-icon"> Codeberg↗</a>
+
+                </div>
+            </div>
+
+            <div class="task-item">
+                <button class="task-button" onclick="toggleMenu(event, 'menu-social')"><img src="/assets/icons/hashtag.svg" class="social-menu-icon" style="width:54px; height=54px;"></button>
+                <div id="menu-social" class="popup-menu">
+                    <s style="opacity:60%;">
+                    <a href="https://www.youtube.com/kevinhenderson"><img src="/assets/icons/youtube.svg" class="menu-icon"> YouTube↗</a>
+                    </s>
+                    <a href="https://www.instagram.com/heavenkenderson"><img src="/assets/icons/instagram.svg" class="menu-icon"> Instagram↗</a>
+                    <s style="opacity:60%;">
+                    <a href="https://www.facebook.com/heaven.kenderson.2025"><img src="/assets/icons/facebook.svg" class="menu-icon"> Facebook↗</a>
+                    </s>
+                    <a href="https://www.linkedin.com/in/kevin-henderson-9354a0a6/"><img src="/assets/icons/linkedin.svg" class="menu-icon"> LinkedIn↗</a>
+                </div>
+            </div>
+
+            <div class="task-item">
+                <button class="task-button" onclick="toggleMenu(event, 'menu-gaming')"><img src="/assets/icons/queen.svg" class="social-menu-icon" style="width:54px; height=54px;"></button>
+                <div id="menu-gaming" class="popup-menu right-aligned">
+                    <a href="https://steamcommunity.com/profiles/76561198047742285/"><img src="/assets/icons/steam.svg" class="menu-icon"> Steam↗</a>
+                    <a href="https://retroachievements.org/user/turbomoses420"><img src="/assets/icons/retroachievements.svg" class="menu-icon"> Retro<br>Achievements↗</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-item">
+            <button class="task-button" onclick="toggleMenu(event, 'menu-start')"><img src="/assets/icons/hamburger-menu.svg" class="menu-icon" style="width:96px; height=96px;"></button>
+            <div id="menu-start" class="popup-menu right-aligned">
+                <a href="/">↙Home</a>
+                <a href="/projects">↙Projects</a>
+                <a href="/timelapses">↙Timelapses</a>
+                <a href="/about">↙About</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu(event, menuId) {
+            event.stopPropagation();
+            const targetMenu = document.getElementById(menuId);
+            const isAlreadyOpen = targetMenu.style.display === 'flex';
+
+            // Close all menus
+            document.querySelectorAll('.popup-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
+
+            // Open clicked menu
+            targetMenu.style.display = isAlreadyOpen ? 'none' : 'flex';
+        }
+
+        // Global click listener to close menus when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.task-button')) {
+                document.querySelectorAll('.popup-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                });
+            }
+        };
+    </script>
+
+</body>
+</html>
