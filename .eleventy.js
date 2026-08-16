@@ -43,6 +43,8 @@ module.exports = function(eleventyConfig) {
     eleventyConfig.addPassthroughCopy('bicycles/*.jpg');
     eleventyConfig.addPassthroughCopy('about/*.webp');
     eleventyConfig.addPassthroughCopy('config/*.gif');
+    eleventyConfig.addPassthroughCopy('projects/*.webp');
+    eleventyConfig.addPassthroughCopy('timelapses/*.webm');
     eleventyConfig.addPassthroughCopy('media/**/*.csv');
     eleventyConfig.addPassthroughCopy('.nojekyll');
     eleventyConfig.setUseGitIgnore(false);

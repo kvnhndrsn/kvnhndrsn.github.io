@@ -35,6 +35,7 @@ import {
   type IViewState,
 } from '../utils/geoUtils';
 import { useTheme, useThemeChangeCounter } from '../hooks/useTheme';
+import { ContributionHeatmap } from '@/components/ContributionHeatmap';
 
 const HASH_RUN_CHANGE_EVENT = 'running-page-hash-run-change';
 
@@ -433,6 +434,24 @@ const Index = () => {
           changeYear={changeYear}
           thisYear={year}
           animationTrigger={animationTrigger}
+        />
+        <ContributionHeatmap
+          activities={activities}
+          year={
+            year === 'Total'
+              ? new Date().getFullYear()
+              : parseInt(year, 10)
+          }
+          filter="all"
+          onSelectActivity={(a) => {
+            if (!a) return;
+            const dayActivities = runs.filter(
+              (r) =>
+                r.start_date_local.slice(0, 10) ===
+                a.start_date_local.slice(0, 10)
+            );
+            locateActivity(dayActivities.map((r) => r.run_id));
+          }}
         />
         {year === 'Total' ? (
           <SVGStat />

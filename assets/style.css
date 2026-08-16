@@ -8,7 +8,7 @@
     --card-bg: rgba(255, 255, 255, 0.9);
     --border-color: rgba(0, 0, 0, 0.1);
     --hover-bg: rgba(0, 0, 0, 0.05);
-    --bg-image: url("/assets/wallpapers/back-light.png");
+    --bg-image: url("/assets/wallpapers/back2-light.png");
     --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -19,7 +19,7 @@
     --card-bg: rgba(30, 30, 30, 0.95);
     --border-color: rgba(255, 255, 255, 0.1);
     --hover-bg: rgba(255, 255, 255, 0.1);
-    --bg-image: url("/assets/wallpapers/back-dark.png");
+    --bg-image: url("/assets/wallpapers/back2-dark.png");
 }
 
 body {
