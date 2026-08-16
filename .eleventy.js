@@ -1,4 +1,8 @@
 module.exports = function(eleventyConfig) {
+    // Pass .nojekyll through to _site/
+    eleventyConfig.addPassthroughCopy(".nojekyll");
+
+module.exports = function(eleventyConfig) {
     
     const markdownIt = require('markdown-it');
     const markdownItOptions = {
