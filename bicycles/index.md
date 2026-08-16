@@ -49,5 +49,6 @@ title: Bicycles
 | Wheels | Bontrager Connection, 32-hole |
 | Tires | Bontrager H2 Comp, 700×35c |
 | Saddle & seatpost | Bontrager Sport |
+| Handlebar | UPANBIKE butterfly handlebar |
 | Pedals | Bontrager City |
 </div>

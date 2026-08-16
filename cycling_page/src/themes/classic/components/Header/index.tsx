@@ -4,7 +4,7 @@ import { useTheme, Theme } from '../../hooks/useTheme';
 import styles from './style.module.css';
 
 const Header = () => {
-  const { logo, siteUrl, navLinks } = getSiteMetadata();
+  const { logo, siteUrl } = getSiteMetadata();
   const { theme, setTheme } = useTheme();
 
   const icons: Record<Theme, ReactElement> = {
@@ -61,15 +61,6 @@ const Header = () => {
           </a>
         </div>
         <div className="flex w-3/4 items-center justify-end text-right">
-          {navLinks.map((n) => (
-            <a
-              key={n.url}
-              href={n.url}
-              className="mr-3 text-lg lg:mr-4 lg:text-base"
-            >
-              {n.name}
-            </a>
-          ))}
           <div className="ml-4 flex items-center space-x-2">
             <button
               type="button"
