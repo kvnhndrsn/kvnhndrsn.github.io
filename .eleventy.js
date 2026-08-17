@@ -41,6 +41,7 @@ module.exports = function(eleventyConfig) {
     
     eleventyConfig.addPassthroughCopy('assets');
     eleventyConfig.addPassthroughCopy('bicycles/*.jpg');
+    eleventyConfig.addPassthroughCopy('bicycles/*.webp');
     eleventyConfig.addPassthroughCopy('about/*.webp');
     eleventyConfig.addPassthroughCopy('config/*.gif');
     eleventyConfig.addPassthroughCopy('projects/*.webp');

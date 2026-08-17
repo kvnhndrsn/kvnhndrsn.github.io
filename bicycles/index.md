@@ -70,6 +70,7 @@ title: Bicycles
 </tr>
 
 <tr>
+    <td class="label"></td>
     <td class="bike-name trek">Trek FX 2</td>
     <td class="bike-name cel">Celervita</td>
 </tr>
