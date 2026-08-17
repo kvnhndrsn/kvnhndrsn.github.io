@@ -65,6 +65,7 @@ title: Bicycles
 <table class="bikes-table">
 
 <tr class="photo-row">
+    <td></td>
     <td><img src="/bicycles/Trek-FX2.webp" alt="Trek FX 2" loading="lazy"></td>
     <td><img src="/bicycles/celervita.webp" alt="Celervita" loading="lazy"></td>
 </tr>
