@@ -14,11 +14,11 @@ xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/
 <trk>
 <name><![CDATA[2026-08-08T10:40-06]]></name>
 <desc><![CDATA[Saturday Aug 8th]]></desc>
-<type><![CDATA[biking]]></type>
+<type><![CDATA[cycling]]></type>
 <extensions>
 <topografix:color>c0c0c0</topografix:color>
 <opentracks:trackid>b57478d2-c148-4ea4-826d-d71dc4383640</opentracks:trackid>
-<opentracks:typeTranslated><![CDATA[biking]]></opentracks:typeTranslated>
+<opentracks:typeTranslated><![CDATA[cycling]]></opentracks:typeTranslated>
 <gpxtrkx:TrackStatsExtension>
 <gpxtrkx:Distance>36807.5859375</gpxtrkx:Distance>
 <gpxtrkx:TimerTime>12291</gpxtrkx:TimerTime>

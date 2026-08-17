@@ -14,11 +14,11 @@ xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/
 <trk>
 <name><![CDATA[2026-07-29T07:06-06]]></name>
 <desc><![CDATA[]]></desc>
-<type><![CDATA[unknown]]></type>
+<type><![CDATA[cycling]]></type>
 <extensions>
 <topografix:color>c0c0c0</topografix:color>
 <opentracks:trackid>06af17f2-5f39-44ec-945d-fc3596f93b33</opentracks:trackid>
-<opentracks:typeTranslated><![CDATA[unknown]]></opentracks:typeTranslated>
+<opentracks:typeTranslated><![CDATA[cycling]]></opentracks:typeTranslated>
 <gpxtrkx:TrackStatsExtension>
 <gpxtrkx:Distance>13438.892578125</gpxtrkx:Distance>
 <gpxtrkx:TimerTime>2810</gpxtrkx:TimerTime>
