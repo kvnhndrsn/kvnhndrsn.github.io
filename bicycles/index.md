@@ -9,6 +9,7 @@ title: Bicycles
     max-width: 900px;
     margin: 2rem auto;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 .bikes-table th,
 .bikes-table td {
@@ -41,12 +42,6 @@ title: Bicycles
     font-weight: 600;
     white-space: nowrap;
     width: 18%;
-}
-.bikes-table .trek {
-    width: 41%;
-}
-.bikes-table .cel {
-    width: 41%;
 }
 .bikes-table .empty {
     color: #555;
