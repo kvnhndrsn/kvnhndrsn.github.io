@@ -1,0 +1,3 @@
+[submodule "cycling_page"]
+	path = cycling_page
+	url = https://github.com/kvnhndrsn/cycling_page.git
