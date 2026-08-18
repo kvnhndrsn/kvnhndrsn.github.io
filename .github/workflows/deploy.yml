@@ -50,7 +50,10 @@ jobs:
         working-directory: cycling_page
         run: |
           python run_page/gpx_sync.py
-          python run_page/gen_svg.py --from-db --type github --output assets/github.svg
+          python run_page/gen_svg.py --from-db --type github --athlete "kvnhndrsn" --title "Cycling" --output assets/github.svg
+          python run_page/gen_svg.py --from-db --type grid --athlete "kvnhndrsn" --title "Cycling" --output assets/grid.svg
+          python run_page/gen_svg.py --from-db --type circular --athlete "kvnhndrsn" --title "Cycling" --output assets/year_2026.svg
+          python run_page/gen_svg.py --from-db --type year_summary --athlete "kvnhndrsn" --output assets/year_summary_2026.svg
 
       - name: Install Cycling Page Dependencies
         working-directory: cycling_page
