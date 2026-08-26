@@ -68,15 +68,22 @@ def load_rides(gpx_dir: Path) -> gpd.GeoDataFrame:
     return gdf[["name", "geometry"]]
 
 
-def get_street_graph(place: str, network_type: str, cache: Path) -> nx.MultiDiGraph:
+def get_street_graph(place: str, network_type: str, cache: Path,
+                     custom_filter: str = None) -> nx.MultiDiGraph:
     cache.mkdir(parents=True, exist_ok=True)
     slug = place.lower().replace(",", "").replace(" ", "-")[:40]
-    fp = cache / f"{slug}-{network_type}.graphml"
+    tag = "custom" if custom_filter else network_type
+    fp = cache / f"{slug}-{tag}.graphml"
     if fp.exists():
         log(f"Using cached graph {fp.name}")
         return ox.load_graphml(fp)
-    log(f"Downloading {network_type} network for '{place}' from OSM...")
-    G = ox.graph_from_place(place, network_type=network_type, simplify=True)
+    log(f"Downloading {tag} network for '{place}' from OSM...")
+    if custom_filter:
+        G = ox.graph_from_place(place, custom_filter=custom_filter,
+                                simplify=True)
+    else:
+        G = ox.graph_from_place(place, network_type=network_type,
+                                simplify=True)
     ox.save_graphml(G, fp)
     log(f"Graph: {len(G.nodes):,} nodes / {G.number_of_edges():,} edges (cached)")
     return G
@@ -468,9 +475,13 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--place", default=DEFAULT_PLACE)
     ap.add_argument("--gpx-dir", type=Path, default=DEFAULT_GPX_DIR)
-    ap.add_argument("--network-type", default="drive",
+    ap.add_argument("--network-type", default="bike",
                     choices=["drive", "bike", "walk", "drive_service",
                              "all_public"])
+    ap.add_argument("--include-trails", action="store_true", default=True,
+                    help="include footways, tracks, and bridleways (default: on)")
+    ap.add_argument("--no-trails", action="store_true",
+                    help="exclude trails, only use --network-type")
     ap.add_argument("--buffer", type=float, default=15,
                     help="GPS buffer radius in metres (default 15)")
     ap.add_argument("--threshold", type=float, default=0.5,
@@ -495,7 +506,15 @@ def main():
     out_dir.mkdir(parents=True, exist_ok=True)
 
     rides = load_rides(args.gpx_dir)
-    G = get_street_graph(args.place, args.network_type, cache)
+
+    custom_filter = None
+    if not args.no_trails:
+        custom_filter = (
+            '["highway"~"motorway|trunk|primary|secondary|tertiary|'
+            'unclassified|residential|living_street|service|cycleway|'
+            'path|footway|track|bridleway"]'
+        )
+    G = get_street_graph(args.place, args.network_type, cache, custom_filter)
 
     edges_m = compute_coverage(G, rides, args.buffer, args.threshold)
     stats = stats_dict(edges_m, rides, args.place)
