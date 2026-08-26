@@ -2,6 +2,7 @@
 # Usage: ./ride.sh "saturday morning ride"
 set -e
 cd ~/11blog/eleventy-garden
+git -C cycling_page pull --rebase
 git -C cycling_page add .
 git -C cycling_page commit -m "${1:-ride: $(date +%Y-%m-%d)}"
 git -C cycling_page push
