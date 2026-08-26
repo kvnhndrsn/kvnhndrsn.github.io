@@ -1,0 +1,4 @@
+osmnx>=2
+geopandas>=1
+gpxpy>=1.6
+folium>=0.18

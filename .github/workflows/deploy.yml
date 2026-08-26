@@ -46,6 +46,12 @@ jobs:
       - name: Install Python Dependencies
         run: pip install -r cycling_page/requirements.txt
 
+      - name: Install Everystreet Dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Generate everystreet coverage map
+        run: python scripts/everystreet.py --gpx-dir cycling_page/GPX_OUT --no-blog coverage
+
       - name: Sync GPX Data
         working-directory: cycling_page
         run: |
