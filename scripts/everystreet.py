@@ -29,7 +29,7 @@ WORKDIR = HOME / "everystreet"
 
 
 def blog_note_dir(blog_dir):
-    return blog_dir / "notes" / "everystreet"
+    return blog_dir / "everystreet"
 
 
 def cache_dir(args_cache):
@@ -491,7 +491,7 @@ def main():
 
     out_dir = args.out_dir or WORKDIR / "output"
     cache = args.cache_dir or WORKDIR / "cache"
-    bn_dir = args.blog_dir / "notes" / "everystreet"
+    bn_dir = args.blog_dir / "everystreet"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     rides = load_rides(args.gpx_dir)

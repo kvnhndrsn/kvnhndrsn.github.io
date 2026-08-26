@@ -3,9 +3,6 @@ title: everystreet
 ---
 ### #everystreet — Regina, SK
 
-Cycling every street in the city. Progress below is generated automatically
-from my GPX ride logs overlaid on the OpenStreetMap street network.
-
 | | |
 |---|---|
 | Streets ridden | **367 km** |
@@ -20,4 +17,3 @@ Updated 2026-08-24 20:19.
 border-radius:8px" loading="lazy"></iframe>
 
 Red = not yet ridden, green = done, blue dashes = planned route.
-Generated with [OSMnx](https://osmnx.readthedocs.io) + GeoPandas.
