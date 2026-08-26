@@ -50,7 +50,7 @@ jobs:
         run: pip install -r scripts/requirements.txt
 
       - name: Generate everystreet coverage map
-        run: python scripts/everystreet.py --gpx-dir cycling_page/GPX_OUT --no-blog coverage
+        run: python scripts/everystreet.py --gpx-dir cycling_page/GPX_OUT --blog-dir . --out-dir . --no-blog coverage
 
       - name: Sync GPX Data
         working-directory: cycling_page
