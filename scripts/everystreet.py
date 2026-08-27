@@ -447,9 +447,6 @@ title: everystreet
 ---
 ### #everystreet — Regina, SK
 
-Cycling every street in the city. Progress below is generated automatically
-from my GPX ride logs overlaid on the OpenStreetMap street network.
-
 | | |
 |---|---|
 | Streets ridden | **{stats['ridden_km']:,.0f} km** |
@@ -464,10 +461,9 @@ Updated {stats['generated']}.
 border-radius:8px" loading="lazy"></iframe>
 
 Red = not yet ridden, green = done, blue dashes = planned route.
-Generated with [OSMnx](https://osmnx.readthedocs.io) + GeoPandas.
 """
-    (blog_dir / "everystreet.md").write_text(md)
-    log(f"Blog note written: {blog_dir/'everystreet.md'}")
+    (blog_dir / "index.md").write_text(md)
+    log(f"Blog note written: {blog_dir/'index.md'}")
 
 
 def main():
