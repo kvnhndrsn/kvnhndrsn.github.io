@@ -160,9 +160,9 @@ def make_map(edges_m, rides_wgs, stats, routes_wgs=None, out_fp=None):
                  "font-size:12px;color:#111;")
     layers = [
         ("Missing streets", edges_m[~edges_m.ridden], "#e8442a",
-         {"weight": 2.5, "opacity": 0.95}, True, street_props),
+         {"weight": 2.5, "opacity": 0.95}, False, street_props),
         ("Ridden streets", edges_m[edges_m.ridden], "#0f9d58",
-         {"weight": 2.5, "opacity": 0.9}, False, street_props),
+         {"weight": 2.5, "opacity": 0.9}, True, street_props),
         ("My GPX tracks", rides_wgs, "#7c3aed",
          {"weight": 1.5, "opacity": 0.65}, False, ("name",)),
     ]
