@@ -52,6 +52,9 @@ jobs:
       - name: Generate everystreet coverage map
         run: python scripts/everystreet.py --gpx-dir cycling_page/GPX_OUT --blog-dir . --out-dir . --no-blog coverage
 
+      - name: Copy everystreet stats to cycling page
+        run: cp stats.json cycling_page/src/static/everystreet-stats.json
+
       - name: Sync GPX Data
         working-directory: cycling_page
         run: |
