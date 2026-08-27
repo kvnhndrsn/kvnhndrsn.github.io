@@ -149,8 +149,8 @@ def _fc(gdf, props=(), style=None):
 
 def make_map(edges_m, rides_wgs, stats, routes_wgs=None, out_fp=None):
     m = folium.Map(
-        tiles="https://tiles.openfreemap.org/styles/bright/{z}/{x}/{y}.png",
-        attr="© OpenStreetMap © OpenFreeMap",
+        tiles="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        attr="&copy; OpenStreetMap contributors",
         control_scale=True,
         prefer_canvas=True,
     )
