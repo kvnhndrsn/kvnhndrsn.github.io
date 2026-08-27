@@ -148,8 +148,12 @@ def _fc(gdf, props=(), style=None):
 
 
 def make_map(edges_m, rides_wgs, stats, routes_wgs=None, out_fp=None):
-    m = folium.Map(tiles="CartoDB positron", control_scale=True,
-                   prefer_canvas=True)
+    m = folium.Map(
+        tiles="https://tiles.openfreemap.org/styles/bright/{z}/{x}/{y}.png",
+        attr="© OpenStreetMap © OpenFreeMap",
+        control_scale=True,
+        prefer_canvas=True,
+    )
     street_props = ("name", "highway", "covered_frac")
     tip_style = ("background:#fff;border:1px solid #ccc;border-radius:6px;"
                  "box-shadow:2px 2px 6px #0003;padding:4px 8px;"
