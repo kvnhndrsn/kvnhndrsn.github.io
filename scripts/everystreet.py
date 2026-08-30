@@ -154,11 +154,11 @@ def make_map(edges_m, rides_wgs, stats, routes_wgs=None, out_fp=None):
          "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
          "&copy; OpenStreetMap contributors",
          {}),
-        ("Voyager",
-         "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+        ("CyclOSM",
+         "https://a.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-         ' contributors &copy; <a href="https://carto.com/">CARTO</a>',
-         {"subdomains": "abcd", "max_zoom": 19}),
+         ' contributors, rendered by <a href="https://www.cyclosm.org">CyclOSM</a>',
+         {"max_zoom": 19}),
         ("Satellite",
          "https://server.arcgisonline.com/ArcGIS/rest/services/"
          "World_Imagery/MapServer/tile/{z}/{y}/{x}",
