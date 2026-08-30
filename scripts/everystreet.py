@@ -148,12 +148,25 @@ def _fc(gdf, props=(), style=None):
 
 
 def make_map(edges_m, rides_wgs, stats, routes_wgs=None, out_fp=None):
-    m = folium.Map(
-        tiles="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-        attr="&copy; OpenStreetMap contributors",
-        control_scale=True,
-        prefer_canvas=True,
-    )
+    m = folium.Map(tiles=None, control_scale=True, prefer_canvas=True)
+    base_tiles = [
+        ("OSM",
+         "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+         "&copy; OpenStreetMap contributors",
+         {}),
+        ("Voyager",
+         "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+         ' contributors &copy; <a href="https://carto.com/">CARTO</a>',
+         {"subdomains": "abcd", "max_zoom": 19}),
+        ("Satellite",
+         "https://server.arcgisonline.com/ArcGIS/rest/services/"
+         "World_Imagery/MapServer/tile/{z}/{y}/{x}",
+         "Tiles &copy; Esri",
+         {"max_zoom": 19}),
+    ]
+    for name, tiles, attr, kw in base_tiles:
+        folium.TileLayer(tiles=tiles, name=name, attr=attr, **kw).add_to(m)
     street_props = ("name", "highway", "covered_frac")
     tip_style = ("background:#fff;border:1px solid #ccc;border-radius:6px;"
                  "box-shadow:2px 2px 6px #0003;padding:4px 8px;"
@@ -201,6 +214,10 @@ def make_map(edges_m, rides_wgs, stats, routes_wgs=None, out_fp=None):
         gj.add_to(fg)
         fg.add_to(m)
     folium.LayerControl(collapsed=False).add_to(m)
+    m.get_root().html.add_child(folium.Element(
+        "<style>.leaflet-control-layers,"
+        ".leaflet-control-layers-expanded{"
+        "background:rgba(255,255,255,0.75);border-radius:8px}</style>"))
 
     legend_items = "".join(
         '<div style="display:flex;align-items:center;margin:4px 0">'
@@ -210,7 +227,7 @@ def make_map(edges_m, rides_wgs, stats, routes_wgs=None, out_fp=None):
         f'margin-right:8px"></span>{n}</div>'
         for n, _, c, st, _, _ in layers)
     legend = f"""<div style="position:fixed;bottom:18px;left:12px;z-index:9999;
-        background:#fffffff2;border-radius:10px;box-shadow:0 2px 10px #0002;
+        background:rgba(255,255,255,0.75);border-radius:10px;box-shadow:0 2px 10px #0002;
         padding:10px 14px;font-family:-apple-system,sans-serif;
         font-size:13px;color:#111">
         <div style="font-weight:700;margin-bottom:6px">#
