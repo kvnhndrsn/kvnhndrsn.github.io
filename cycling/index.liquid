@@ -8,19 +8,14 @@ title: Cycling
 
 {% rideSummary rides.rides %}
 
-<h2 class="section-title" id="rides">Rides</h2>
-{% yearFilter rides.rides %}
-{% rideTable rides.rides %}
-
-<h2 class="section-title">Activity heatmap</h2>
-{% heatmap rides.rides %}
-<p class="heatmap-hint">Click a day to highlight that ride&nbsp;— mirrors the map you can open on the everystreet map below.</p>
-
 <h2 class="section-title" id="everystreet">
     <span>#everystreet — Regina, SK</span>
-    <a class="map-link" href="/everystreet/map.html" target="_blank" rel="noopener">Full map&nbsp;↗</a>
+    <a class="map-link" href="/everystreet/map.html" target="_blank" rel="noopener">Open&nbsp;↗</a>
 </h2>
-<div class="everystreet-summary">
+<div class="everystreet-map">
+    <iframe src="/everystreet/map.html" title="Everystreet coverage map" loading="lazy"></iframe>
+</div>
+<div class="everystreet-mini">
     <div class="ring">
         <svg class="ring-svg" viewBox="0 0 120 120" aria-hidden="true">
             <circle class="ring-bg" cx="60" cy="60" r="52"/>
@@ -38,12 +33,13 @@ title: Cycling
         <div><span class="stat-label">Rides</span><strong>{{ everystreet.rides }}</strong></div>
     </div>
 </div>
-<div class="everystreet-photos">
-    <img src="/assets/Regina.webp" alt="Regina, Saskatchewan" loading="lazy">
-    <img src="/assets/Regina_Mosaic.webp" alt="Regina photo mosaic" loading="lazy">
-</div>
-<div class="everystreet-map">
-    <iframe src="/everystreet/map.html" title="Everystreet coverage map" loading="lazy"></iframe>
-</div>
+
+<h2 class="section-title" id="rides">Rides</h2>
+{% yearFilter rides.rides %}
+{% rideTable rides.rides %}
+
+<h2 class="section-title">Activity heatmap</h2>
+{% heatmap rides.rides %}
+<p class="heatmap-hint">Click a day to highlight that ride in the table above.</p>
 
 {% ridesData rides.rides %}
