@@ -51,6 +51,12 @@ module.exports = function(eleventyConfig) {
     eleventyConfig.addPassthroughCopy('.nojekyll');
     eleventyConfig.setUseGitIgnore(false);
 
+    const cycling = require('./scripts/cycling-shortcodes');
+    for (const [name, fn] of Object.entries(cycling)) {
+        eleventyConfig.addLiquidShortcode(name, fn);
+        eleventyConfig.addNunjucksShortcode(name, fn);
+    }
+
     return {
         dir: {
             input: "./",

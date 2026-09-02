@@ -1,17 +1,20 @@
 node_modules/
 _site/
-*.webm
-!timelapses/*.webm
-projects/geotexdb/dist/pdfs
 
-# Build output
-_site/
-cycling_page/dist/
+# Build/CI artifacts
+stats.json
+everystreet.gpkg
 
 # Dependencies
 node_modules/
-cycling_page/node_modules/
 .venv/
+
+# Ignore large webm everywhere except timelapses (committed for CI deploy)
+*.webm
+!timelapses/*.webm
+
+# Generated PDFs
+projects/geotexdb/dist/pdfs
 
 # System / Cache
 .DS_Store

@@ -80,7 +80,7 @@ title: Bicycles
 <tr>
     <td class="label">Frame</td>
     <td class="trek">Alpha Gold Aluminum</td>
-    <td class="cel empty">—</td>
+    <td class="cel">Carbon Steel</td>
 </tr>
 
 <tr>
@@ -92,7 +92,7 @@ title: Bicycles
 <tr>
     <td class="label">Drivetrain</td>
     <td class="trek">40T crank · 11-46 cassette · LG500 chain</td>
-    <td class="cel">48T crank · 16T cog (3:1 ratio)</td>
+    <td class="cel">48T crank · 16T cog</td>
 </tr>
 
 <tr>
@@ -121,14 +121,14 @@ title: Bicycles
 
 <tr>
     <td class="label">Handlebar</td>
-    <td class="trek">UPANBIKE butterfly handlebar</td>
-    <td class="cel empty">—</td>
+    <td class="trek">UPANBIKE butterfly</td>
+    <td class="cel">UPANBIKE bullhorn 370mm</td>
 </tr>
 
 <tr>
     <td class="label">Pedals</td>
     <td class="trek">Bontrager City</td>
-    <td class="cel empty">—</td>
+    <td class="cel">unknown metal</td>
 </tr>
 
 </table>

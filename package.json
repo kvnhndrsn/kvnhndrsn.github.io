@@ -6,8 +6,7 @@
     "start": "eleventy --serve --quiet",
     "compile": "eleventy",
     "build:11ty": "eleventy",
-    "build:cycling": "cd cycling_page && npm install && npm run build",
-    "build": "rm -rf _site && npm run build:11ty && npm run build:cycling"
+    "build": "rm -rf _site && npm run build:11ty"
   },
   "repository": {
     "type": "git",

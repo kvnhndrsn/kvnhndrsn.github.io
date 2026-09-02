@@ -24,8 +24,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
-        with:
-          submodules: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -41,32 +39,19 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
-          cache-dependency-path: cycling_page/requirements.txt
-
-      - name: Install Python Dependencies
-        run: pip install -r cycling_page/requirements.txt
+          cache-dependency-path: scripts/requirements.txt
 
       - name: Install Everystreet Dependencies
         run: pip install -r scripts/requirements.txt
 
       - name: Generate everystreet coverage map
-        run: python scripts/everystreet.py --gpx-dir cycling_page/GPX_OUT --blog-dir . --out-dir . --no-blog coverage
+        run: python scripts/everystreet.py --gpx-dir GPX_OUT --blog-dir . --out-dir . --no-blog coverage
 
-      - name: Copy everystreet stats to cycling page
-        run: cp stats.json cycling_page/src/static/everystreet-stats.json
+      - name: Copy everystreet stats to site data
+        run: cp stats.json _data/everystreet.json
 
-      - name: Sync GPX Data
-        working-directory: cycling_page
-        run: |
-          python run_page/gpx_sync.py
-          python run_page/gen_svg.py --from-db --type github --athlete "kvnhndrsn" --title "Cycling" --output assets/github.svg
-          python run_page/gen_svg.py --from-db --type grid --athlete "kvnhndrsn" --title "Cycling" --output assets/grid.svg
-          python run_page/gen_svg.py --from-db --type circular --athlete "kvnhndrsn" --title "Cycling" --output assets/year_2026.svg
-          python run_page/gen_svg.py --from-db --type year_summary --athlete "kvnhndrsn" --output assets/year_summary_2026.svg
-
-      - name: Install Cycling Page Dependencies
-        working-directory: cycling_page
-        run: npm install
+      - name: Parse GPX into rides data
+        run: python scripts/gpx_to_rides.py --gpx-dir GPX_OUT --out _data/rides.json
 
       - name: Build Complete Site
         run: npm run build

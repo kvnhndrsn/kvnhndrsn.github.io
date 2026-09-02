@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/assets/cycling.css">
+</head>
+<body class="cycling-page">
+    <header class="site-header">
+        <a class="brand" href="/">{{ site.title }}</a>
+        <nav class="site-nav">
+            <a href="/">Home</a>
+            <a href="/bicycles/">Bicycles</a>
+            <a href="#everystreet">#everystreet</a>
+        </nav>
+    </header>
+    <main class="page-main">
+        {{ content }}
+    </main>
+    <footer class="site-footer">
+        Rides parsed from raw GPX at build time ·
+        <a href="https://kvnhndrsn.github.io">Home</a>
+    </footer>
+    <script src="/assets/cycling.js" defer></script>
+</body>
+</html>
