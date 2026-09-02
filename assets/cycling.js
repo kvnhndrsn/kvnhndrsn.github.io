@@ -72,40 +72,7 @@
     });
   }
 
-  function initRowFocus() {
-    if (!table) return;
-    var iframe = document.querySelector(".everystreet-map iframe");
-    if (!iframe) return;
-    var pending = false;
-    table.addEventListener("click", function (e) {
-      var tr = e.target.closest("tr[data-date]");
-      if (!tr) return;
-      var focus = function () {
-        var win = iframe.contentWindow;
-        if (win && typeof win.__rideFocus === "function") {
-          if (win.__rideFocus(tr.dataset.date)) {
-            iframe.scrollIntoView({ behavior: "smooth", block: "start" });
-            return true;
-          }
-        }
-        return false;
-      };
-      if (!focus() && !pending) {
-        pending = true;
-        iframe.addEventListener(
-          "load",
-          function () {
-            pending = false;
-            focus();
-          },
-          { once: true }
-        );
-      }
-    });
-  }
-
   initSort();
   initYearFilter();
   initHeatmap();
-  initRowFocus();
 })();

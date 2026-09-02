@@ -22,8 +22,6 @@ import numpy as np
 import osmnx as ox
 from shapely import LineString, union_all
 
-from gpxlib import ride_from_file
-
 HOME = Path.home()
 DEFAULT_PLACE = "Regina, Saskatchewan, Canada"
 DEFAULT_GPX_DIR = HOME / "11blog/eleventy-garden/cycling_page/GPX_OUT"
@@ -51,30 +49,23 @@ def load_rides(gpx_dir: Path) -> gpd.GeoDataFrame:
         sys.exit(f"No GPX files found in {gpx_dir}")
     for f in files:
         try:
-            r = ride_from_file(f)
+            gpx = gpxpy.parse(open(f, encoding="utf-8", errors="ignore"))
         except Exception as e:
             log(f"  skipping {f.name}: {e}")
             continue
-        if r is None or len(r["coords"]) < 2:
+        pts = []
+        for trk in gpx.tracks:
+            for seg in trk.segments:
+                pts += [(p.longitude, p.latitude) for p in seg.points]
+        if len(pts) < 2:
             continue
-        line = LineString(r["coords"])
+        line = LineString(pts)
         if not line.is_valid:
             continue
-        rows.append({
-            "name": r["name"] or f.stem,
-            "date": r["date"],
-            "distance_km": r["distance_km"],
-            "moving_time_s": r["moving_time_s"],
-            "avg_speed_kmh": r["avg_speed_kmh"],
-            "elevation_gain_m": r["elevation_gain_m"],
-            "points": len(r["coords"]),
-            "geometry": line,
-        })
+        rows.append({"name": f.stem, "geometry": line, "points": len(pts)})
     gdf = gpd.GeoDataFrame(rows, crs="EPSG:4326")
     log(f"Loaded {len(gdf)} rides ({gdf['points'].sum():,} trackpoints)")
-    cols = ["name", "date", "distance_km", "moving_time_s",
-            "avg_speed_kmh", "elevation_gain_m", "points", "geometry"]
-    return gdf[cols]
+    return gdf[["name", "geometry"]]
 
 
 def get_street_graph(place: str, network_type: str, cache: Path,
@@ -185,9 +176,10 @@ def make_map(edges_m, rides_wgs, stats, routes_wgs=None, out_fp=None):
          {"weight": 2.5, "opacity": 0.95}, False, street_props),
         ("Ridden streets", edges_m[edges_m.ridden], "#0f9d58",
          {"weight": 2.5, "opacity": 0.9}, True, street_props),
+        ("My GPX tracks", rides_wgs, "#7c3aed",
+         {"weight": 1.5, "opacity": 0.65}, False, ("name",)),
     ]
     wgs = []
-    legend_defs = []
     for name, gdf, color, style, show, props in layers:
         fg = folium.FeatureGroup(name, show=show)
         gdf = gdf.to_crs("EPSG:4326")
@@ -197,63 +189,14 @@ def make_map(edges_m, rides_wgs, stats, routes_wgs=None, out_fp=None):
             smooth_factor=1.5,
         )
         folium.GeoJsonTooltip(
-            fields=["name", "coverage"],
-            aliases=["street", "ridden"],
+            fields=list(props[:1]) + (["coverage"] if "covered_frac" in
+                                      gdf.columns else []),
+            aliases=(["street", "ridden"] if props == street_props
+                     else ["ride"]),
             localize=True, sticky=False, style=tip_style,
         ).add_to(gj)
         gj.add_to(fg)
         fg.add_to(m)
-        legend_defs.append((name, color, style))
-
-    # Per-year ride layers: hover highlights, click shows a stats popup,
-    # toggled by the layer control and the injected chip bar below.
-    year_vars = {}
-    rides = rides_wgs.to_crs("EPSG:4326")
-    if len(rides):
-        rides = rides.copy()
-        rides["distance"] = [f"{v:.1f} km" if v is not None else "-"
-                            for v in rides["distance_km"]]
-        rides["moving_time"] = [f"{int(v // 60)} min" if v else "-"
-                                for v in rides["moving_time_s"]]
-        rides["avg_speed"] = [f"{v:.1f} km/h" if v is not None else "-"
-                              for v in rides["avg_speed_kmh"]]
-        rides["elevation"] = [f"{v:.0f} m" if v is not None else "-"
-                              for v in rides["elevation_gain_m"]]
-    ride_colors = ["#7c3aed", "#2563eb", "#14b8a6", "#f97316", "#ef4444"]
-    ride_props = ("name", "date", "distance", "moving_time",
-                  "avg_speed", "elevation")
-    ride_aliases = ("Ride", "Date", "Distance", "Moving time",
-                    "Avg speed", "Elevation")
-    years = sorted({y for y in rides["date"].str[:4] if y}, reverse=True)
-    for i, year in enumerate(years):
-        sub = rides[rides["date"].str.startswith(year)]
-        if sub.empty:
-            continue
-        color = ride_colors[i % len(ride_colors)]
-        gj = folium.GeoJson(
-            _fc(sub, ride_props, {"color": color, "weight": 2.2,
-                                  "opacity": 0.8}),
-            name=f"Rides {year}",
-            smooth_factor=1.5,
-            show=True,
-            popup_keep_highlighted=True,
-            highlight_function=lambda x: {
-                "weight": 8, "color": "#ffb020", "opacity": 1.0},
-            popup=folium.GeoJsonPopup(
-                fields=ride_props, aliases=ride_aliases,
-                localize=True, sticky=False, style=tip_style),
-        )
-        folium.GeoJsonTooltip(
-            fields=("name",), aliases=("ride",), localize=True,
-            sticky=False, style=tip_style,
-        ).add_to(gj)
-        fg = folium.FeatureGroup(f"Rides {year}", show=True)
-        gj.add_to(fg)
-        fg.add_to(m)
-        year_vars[year] = {"fg": fg.get_name(), "gj": gj.get_name()}
-        wgs.append(sub)
-        legend_defs.append((f"Rides {year}", color, {"weight": 2.2}))
-
     if routes_wgs is not None and len(routes_wgs):
         fg = folium.FeatureGroup("Planned loops", show=True)
         rw = routes_wgs.to_crs("EPSG:4326")
@@ -270,83 +213,11 @@ def make_map(edges_m, rides_wgs, stats, routes_wgs=None, out_fp=None):
         ).add_to(gj)
         gj.add_to(fg)
         fg.add_to(m)
-        legend_defs.append(("Planned loops", "#2563eb",
-                            {"weight": 3.5, "dashArray": "7 9"}))
     folium.LayerControl(collapsed=False).add_to(m)
-    style_css = (
-        ".leaflet-control-layers,"
+    m.get_root().html.add_child(folium.Element(
+        "<style>.leaflet-control-layers,"
         ".leaflet-control-layers-expanded{"
-        "background:rgba(255,255,255,0.75);border-radius:8px}"
-        ".ride-chips{background:rgba(255,255,255,0.75);border-radius:8px;"
-        "padding:8px;box-shadow:0 2px 10px #0002;display:flex;"
-        "flex-wrap:wrap;gap:6px;width:max-content}"
-        ".ride-chip{border:1px solid #555;background:#fff;color:#111;"
-        "border-radius:999px;padding:4px 12px;font-size:12px;"
-        "font-family:-apple-system,sans-serif;cursor:pointer}"
-        ".ride-chip:hover{background:#eee}"
-        ".ride-chip.active{background:#7c3aed;border-color:#7c3aed;color:#fff}")
-    m.get_root().html.add_child(folium.Element(f"<style>{style_css}</style>"))
-
-    if year_vars:
-        mapvar = m.get_name()
-        fg_json = json.dumps({y: v["fg"] for y, v in year_vars.items()})
-        gj_json = json.dumps({y: v["gj"] for y, v in year_vars.items()})
-        chip_js = f"""window.addEventListener('DOMContentLoaded', function () {{
-  var __map = {mapvar};
-  var __fg = {fg_json};
-  var __gj = {gj_json};
-  window.__ride = {{}};
-  Object.keys(__gj).forEach(function (y) {{
-    __gj[y].eachLayer(function (l) {{
-      if (l.feature && l.feature.properties &&
-          l.feature.properties['date']) {{
-        window.__ride[l.feature.properties['date']] = l;
-      }}
-    }});
-  }});
-  function showYear(y, on) {{
-    if (on) {{ __map.addLayer(__fg[y]); }}
-    else {{ __map.removeLayer(__fg[y]); }}
-  }}
-  window.__rideFocus = function (date) {{
-    var l = window.__ride[date];
-    if (!l) {{ return false; }}
-    var year = String(date).slice(0, 4);
-    if (__fg[year]) {{ showYear(year, true); }}
-    __map.closePopup();
-    if (l.getBounds && l.getBounds().isValid()) {{
-      __map.fitBounds(l.getBounds(), {{ padding: [50, 50], maxZoom: 15 }});
-    }}
-    l.openPopup();
-    return true;
-  }};
-  var __chips = L.control({{ position: 'bottomright' }});
-  __chips.onAdd = function () {{
-    var el = L.DomUtil.create('div', 'ride-chips');
-    var labels = ['All'].concat(Object.keys(__fg).sort().reverse());
-    el.innerHTML = labels.map(function (y) {{
-      return '<button type="button" class="ride-chip" data-y="' + y + '">'
-           + y + '</button>';
-    }}).join('');
-    el.querySelector('[data-y="All"]').classList.add('active');
-    el.addEventListener('click', function (e) {{
-      var btn = e.target.closest('.ride-chip');
-      if (!btn) {{ return; }}
-      el.querySelectorAll('.ride-chip').forEach(function (b) {{
-        b.classList.remove('active');
-      }});
-      btn.classList.add('active');
-      var sel = btn.dataset.y;
-      Object.keys(__fg).forEach(function (y) {{
-        showYear(y, sel === 'All' || sel === y);
-      }});
-    }});
-    return el;
-  }};
-  __chips.addTo(__map);
-}});
-"""
-        m.get_root().script.add_child(folium.Element(chip_js))
+        "background:rgba(255,255,255,0.75);border-radius:8px}</style>"))
 
     legend_items = "".join(
         '<div style="display:flex;align-items:center;margin:4px 0">'
@@ -354,7 +225,7 @@ def make_map(edges_m, rides_wgs, stats, routes_wgs=None, out_fp=None):
         f'border-top:{st.get("weight", 2) + 1:.0f}px '
         f'{"dashed" if "dashArray" in st else "solid"} {c};'
         f'margin-right:8px"></span>{n}</div>'
-        for n, c, st in legend_defs)
+        for n, _, c, st, _, _ in layers)
     legend = f"""<div style="position:fixed;bottom:18px;left:12px;z-index:9999;
         background:rgba(255,255,255,0.75);border-radius:10px;box-shadow:0 2px 10px #0002;
         padding:10px 14px;font-family:-apple-system,sans-serif;
