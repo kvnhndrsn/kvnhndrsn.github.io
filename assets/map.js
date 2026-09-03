@@ -34,32 +34,50 @@
   var MISSING_COLOR = "#e8442a";
   var RIDDEN_COLOR = "#0f9d58";
 
-  var map, selectedRideIdx = null, detailPanel, legend, rideCoords = {};
+  var map, selectedRideIdx = null, detailPanel, legend, rideCoords = {}, allRides = [], rideLayerByIndex = {};
 
   function init() {
     var container = document.getElementById("map");
     if (!container) return;
 
-    map = new maplibregl.Map({
-      container: container,
-      style: { version: 8, sources: {}, layers: [] },
-      center: [-104.65, 50.45],
-      zoom: 12,
-      maxZoom: 19,
-      attributionControl: true,
-    });
+    try {
+      map = new maplibregl.Map({
+        container: container,
+        style: { version: 8, sources: {}, layers: [] },
+        center: [-104.65, 50.45],
+        zoom: 12,
+        maxZoom: 19,
+        attributionControl: true,
+      });
+    } catch (e) {
+      return;
+    }
 
     map.addControl(new maplibregl.NavigationControl(), "top-right");
 
     map.on("load", function () {
-      addTileLayers();
-      loadStreetCoverage();
-      loadRides();
-      addLayerControl();
-      addLegend();
-      addDetailPanel();
+      try {
+        addTileLayers();
+      } catch (e) {}
+      try {
+        loadStreetCoverage();
+      } catch (e) {}
+      try {
+        loadRides();
+      } catch (e) {}
+      try {
+        addLayerControl();
+      } catch (e) {}
+      try {
+        addLegend();
+      } catch (e) {}
+      try {
+        addDetailPanel();
+      } catch (e) {}
       addKeyboardHandler();
     });
+
+    window.selectRideByIndex = selectRideByIndex;
   }
 
   /* ── Tile layers ─────────────────────────────────────────── */
@@ -68,21 +86,20 @@
     var keys = Object.keys(TILES);
     keys.forEach(function (key, i) {
       var t = TILES[key];
+      if (map.getSource("tile-" + key)) return;
       map.addSource("tile-" + key, {
         type: "raster",
         tiles: [t.tiles],
         maxzoom: t.maxzoom,
         tileSize: 256,
+        attribution: t.attribution,
       });
-      map.addLayer(
-        {
-          id: "tile-" + key,
-          type: "raster",
-          source: "tile-" + key,
-          paint: { "raster-opacity": i === 0 ? 1 : 0 },
-        },
-        "z-steet-coverage"
-      );
+      map.addLayer({
+        id: "tile-" + key,
+        type: "raster",
+        source: "tile-" + key,
+        paint: { "raster-opacity": i === 0 ? 1 : 0 },
+      });
     });
   }
 
@@ -91,38 +108,32 @@
   function loadStreetCoverage() {
     loadGeoJSON("/everystreet/data/missing-streets.geojson", function (fc) {
       map.addSource("missing-streets", { type: "geojson", data: fc });
-      map.addLayer(
-        {
-          id: "missing-streets",
-          type: "line",
-          source: "missing-streets",
-          layout: { "line-join": "round", "line-cap": "round" },
-          paint: {
-            "line-color": MISSING_COLOR,
-            "line-width": 2.5,
-            "line-opacity": 0.95,
-          },
+      map.addLayer({
+        id: "missing-streets",
+        type: "line",
+        source: "missing-streets",
+        layout: { "line-join": "round", "line-cap": "round" },
+        paint: {
+          "line-color": MISSING_COLOR,
+          "line-width": 2.5,
+          "line-opacity": 0.95,
         },
-        "z-streets"
-      );
+      });
     });
 
     loadGeoJSON("/everystreet/data/ridden-streets.geojson", function (fc) {
       map.addSource("ridden-streets", { type: "geojson", data: fc });
-      map.addLayer(
-        {
-          id: "ridden-streets",
-          type: "line",
-          source: "ridden-streets",
-          layout: { "line-join": "round", "line-cap": "round" },
-          paint: {
-            "line-color": RIDDEN_COLOR,
-            "line-width": 2.5,
-            "line-opacity": 0.9,
-          },
+      map.addLayer({
+        id: "ridden-streets",
+        type: "line",
+        source: "ridden-streets",
+        layout: { "line-join": "round", "line-cap": "round" },
+        paint: {
+          "line-color": RIDDEN_COLOR,
+          "line-width": 2.5,
+          "line-opacity": 0.9,
         },
-        "z-streets"
-      );
+      });
     });
 
     loadGeoJSON("/everystreet/data/planned-routes.geojson", function (fc) {
@@ -159,6 +170,8 @@
       return;
     }
     if (!rides || !rides.length) return;
+    allRides = rides;
+    rideLayerByIndex = {};
 
     rides.forEach(function (ride, idx) {
       if (!ride.trace || ride.trace.length < 2) return;
@@ -167,6 +180,7 @@
       });
       var color = RIDE_COLORS[idx % RIDE_COLORS.length];
       rideCoords[idx] = coords;
+      rideLayerByIndex[idx] = idx;
 
       map.addSource("ride-" + idx, {
         type: "geojson",
@@ -351,6 +365,20 @@
 
   function hideRideDetail() {
     if (detailPanel) detailPanel.classList.remove("visible");
+  }
+
+  /* ── External entry point (used by table/heatmap clicks) ── */
+
+  function selectRideByIndex(idx, opts) {
+    opts = opts || {};
+    if (!map || !allRides.length) return;
+    idx = parseInt(idx, 10);
+    if (isNaN(idx) || !allRides[idx] || !rideCoords[idx]) return;
+    selectRide(idx, allRides[idx]);
+    if (opts && opts.scrollToMap) {
+      var el = document.getElementById("map");
+      if (el && el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   }
 
   /* ── Layer control ───────────────────────────────────────── */

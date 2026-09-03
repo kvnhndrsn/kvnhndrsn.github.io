@@ -3,6 +3,7 @@
   var table = document.getElementById("ride-table");
   var heatmap = document.querySelector(".heatmap");
   var yearFilter = document.getElementById("year-filter");
+  var mapEl = document.getElementById("map");
 
   function initSort() {
     if (!table) return;
@@ -72,7 +73,22 @@
     });
   }
 
+  function initTableRideClick() {
+    if (!table) return;
+    table.addEventListener("click", function (e) {
+      var tr = e.target.closest("tr[data-ride-idx]");
+      if (!tr) return;
+      var idx = tr.dataset.rideIdx;
+      if (window.selectRideByIndex) {
+        window.selectRideByIndex(idx, { scrollToMap: true });
+      } else if (mapEl && mapEl.scrollIntoView) {
+        mapEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    });
+  }
+
   initSort();
   initYearFilter();
   initHeatmap();
+  initTableRideClick();
 })();

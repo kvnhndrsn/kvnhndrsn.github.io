@@ -67,12 +67,12 @@ function rideTable(rides) {
   }
 
   const body = rides
-    .map((r) => {
+    .map((r, idx) => {
       const date = r.date || "";
       const speed =
         r.avg_speed_kmh != null ? r.avg_speed_kmh.toFixed(1) : "&mdash;";
       return (
-        `<tr data-date="${date}" data-year="${date.slice(0, 4)}">` +
+        `<tr data-date="${date}" data-year="${date.slice(0, 4)}" data-ride-idx="${idx}">` +
         `<td class="c-date" data-value="${date}">${date}</td>` +
         `<td data-value="${r.distance_km}">${r.distance_km.toFixed(2)}</td>` +
         `<td data-value="${r.elevation_gain_m}">${r.elevation_gain_m.toFixed(1)}</td>` +

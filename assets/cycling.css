@@ -265,8 +265,9 @@
   position: absolute;
   top: 72px;
   right: 10px;
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.92);
+  z-index: 1000;
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 8px;
   border: 1px solid #ccc;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
@@ -274,6 +275,7 @@
   font: 13px/1.4 -apple-system, sans-serif;
   color: #111;
   min-width: 150px;
+  user-select: none;
 }
 
 .map-layer-control .lc-heading {
@@ -300,13 +302,21 @@
 .map-layer-control .lc-item input {
   cursor: pointer;
   accent-color: #111;
+  width: 16px;
+  height: 16px;
+}
+
+.map-layer-control .lc-item:hover {
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 4px;
 }
 
 .map-layer-control .lc-swatch {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 3px;
   flex: none;
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 /* Legend (bottom-left) */
@@ -314,7 +324,8 @@
   position: absolute;
   bottom: 18px;
   left: 10px;
-  z-index: 10;
+  z-index: 1000;
+  pointer-events: none;
   background: rgba(255, 255, 255, 0.92);
   border-radius: 10px;
   border: 1px solid #ccc;
