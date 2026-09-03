@@ -254,11 +254,177 @@
   background: #000;
 }
 
-.everystreet-map iframe {
-  display: block;
+.maplibre-map {
+  position: relative;
   width: 100%;
   height: 480px;
+}
+
+/* Layer control (top-right, below nav) */
+.map-layer-control {
+  position: absolute;
+  top: 72px;
+  right: 10px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  padding: 8px 10px;
+  font: 13px/1.4 -apple-system, sans-serif;
+  color: #111;
+  min-width: 150px;
+}
+
+.map-layer-control .lc-heading {
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 6px 0 3px;
+  opacity: 0.7;
+}
+
+.map-layer-control .lc-heading:first-child {
+  margin-top: 0;
+}
+
+.map-layer-control .lc-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+  cursor: pointer;
+}
+
+.map-layer-control .lc-item input {
+  cursor: pointer;
+  accent-color: #111;
+}
+
+.map-layer-control .lc-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex: none;
+}
+
+/* Legend (bottom-left) */
+.map-legend {
+  position: absolute;
+  bottom: 18px;
+  left: 10px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  padding: 10px 14px;
+  font: 13px/1.5 -apple-system, sans-serif;
+  color: #111;
+}
+
+.map-legend .legend-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.map-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 3px 0;
+}
+
+.map-legend .legend-swatch {
+  display: inline-block;
+  width: 28px;
+  font-size: 0;
+}
+
+/* Ride detail panel (bottom-right) */
+.ride-detail-panel {
+  position: absolute;
+  bottom: 18px;
+  right: 10px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  color: #111;
+  font: 13px/1.5 -apple-system, sans-serif;
+  width: 240px;
+  padding: 10px 12px;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.ride-detail-panel.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.ride-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ride-detail-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.ride-detail-date {
+  font-weight: 700;
+  flex: 1;
+}
+
+.ride-detail-close {
+  background: none;
   border: 0;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #555;
+  padding: 0 2px;
+}
+
+.ride-detail-close:hover {
+  color: #000;
+}
+
+.ride-detail-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px 16px;
+}
+
+.ride-detail-stats > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.rd-label {
+  opacity: 0.6;
+}
+
+.rd-value {
+  font-weight: 600;
+}
+
+/* Keep popup text crisp over dark map */
+.maplibre-map .maplibregl-popup-content {
+  font: 13px/1.4 -apple-system, sans-serif;
+  color: #111;
 }
 
 .everystreet-mini {

@@ -3,6 +3,7 @@ layout: default
 title: Cycling
 ---
 
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <link rel="stylesheet" href="/assets/cycling.css">
 
 <h1 class="page-title">Cycling</h1>
@@ -15,7 +16,7 @@ title: Cycling
     <a class="map-link" href="/everystreet/map.html" target="_blank" rel="noopener">Open&nbsp;↗</a>
 </h2>
 <div class="everystreet-map">
-    <iframe src="/everystreet/map.html" title="Everystreet coverage map" loading="lazy"></iframe>
+    <div id="map" class="maplibre-map"></div>
 </div>
 <div class="everystreet-mini">
     <div class="ring">
@@ -46,4 +47,6 @@ title: Cycling
 
 {% ridesData rides.rides %}
 
+<script defer src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script defer src="/assets/map.js"></script>
 <script defer src="/assets/cycling.js"></script>

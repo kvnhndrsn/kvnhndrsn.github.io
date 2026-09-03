@@ -248,6 +248,47 @@ def make_map(edges_m, rides_wgs, stats, routes_wgs=None, out_fp=None):
         log(f"Map saved: {out_fp.name} ({out_fp.stat().st_size/1e6:.1f} MB)")
 
 
+def export_geojson(edges_m, routes_wgs, bn_dir):
+    data_dir = bn_dir / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    miss = edges_m[~edges_m.ridden].to_crs("EPSG:4326")
+    ride = edges_m[edges_m.ridden].to_crs("EPSG:4326")
+    miss_feats = []
+    for row in miss.itertuples():
+        coords = [[round(x, 5), round(y, 5)] for x, y in row.geometry.coords]
+        miss_feats.append({
+            "type": "Feature",
+            "properties": {"name": row.name or "(unnamed)", "highway": row.highway},
+            "geometry": {"type": "LineString", "coordinates": coords},
+        })
+    ride_feats = []
+    for row in ride.itertuples():
+        coords = [[round(x, 5), round(y, 5)] for x, y in row.geometry.coords]
+        ride_feats.append({
+            "type": "Feature",
+            "properties": {"name": row.name or "(unnamed)", "highway": row.highway},
+            "geometry": {"type": "LineString", "coordinates": coords},
+        })
+    for name, feats in [("missing-streets", miss_feats), ("ridden-streets", ride_feats)]:
+        fc = {"type": "FeatureCollection", "features": feats}
+        fp = data_dir / f"{name}.geojson"
+        fp.write_text(json.dumps(fc))
+        log(f"Wrote {fp.name}: {len(feats):,} features ({fp.stat().st_size / 1e6:.1f} MB)")
+    if routes_wgs is not None and len(routes_wgs):
+        rw = routes_wgs.to_crs("EPSG:4326")
+        r_feats = []
+        for row in rw.itertuples():
+            coords = [[round(x, 5), round(y, 5)] for x, y in row.geometry.coords]
+            r_feats.append({
+                "type": "Feature",
+                "properties": {"name": row.name, "chunk_km": row.chunk_km},
+                "geometry": {"type": "LineString", "coordinates": coords},
+            })
+        fp = data_dir / "planned-routes.geojson"
+        fp.write_text(json.dumps({"type": "FeatureCollection", "features": r_feats}))
+        log(f"Wrote {fp.name}: {len(r_feats)} features")
+
+
 def export_gpkg(edges_m, rides_wgs, fp):
     fp.parent.mkdir(parents=True, exist_ok=True)
     if fp.exists():
@@ -552,6 +593,9 @@ def main():
                 fp = rdir / f"{r.name.replace(' ', '_').lower()}.gpx"
                 write_route_gpx(r.name, r.chunk_km, r.geometry, fp)
             log(f"Wrote {len(routes_wgs)} route GPX files -> {rdir}")
+
+    export_geojson(edges_m, routes_wgs, bn_dir)
+    (bn_dir / "data" / "stats.json").write_text(json.dumps(stats, indent=2))
 
     make_map(edges_m, rides, stats, routes_wgs, out_fp=bn_dir / "map.html")
     export_gpkg(edges_m, rides, out_dir / "everystreet.gpkg")
