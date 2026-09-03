@@ -43,7 +43,7 @@ function formatTime(seconds) {
 function rideTable(rides) {
   const cols = [
     ["Date", "date"],
-    ["km", "dist"],
+    ["Dist", "dist"],
     ["Elev", "elev"],
     ["Speed", "speed"],
     ["Route", null],
@@ -74,9 +74,9 @@ function rideTable(rides) {
       return (
         `<tr data-date="${date}" data-year="${date.slice(0, 4)}" data-ride-idx="${idx}">` +
         `<td class="c-date" data-value="${date}">${date}</td>` +
-        `<td data-value="${r.distance_km}">${r.distance_km.toFixed(2)}</td>` +
-        `<td data-value="${r.elevation_gain_m}">${r.elevation_gain_m.toFixed(1)}</td>` +
-        `<td data-value="${r.avg_speed_kmh ?? 0}">${speed}</td>` +
+        `<td data-value="${r.distance_km}">${r.distance_km.toFixed(2)}<span class="u">km</span></td>` +
+        `<td data-value="${r.elevation_gain_m}">${r.elevation_gain_m.toFixed(1)}<span class="u">m</span></td>` +
+        `<td data-value="${r.avg_speed_kmh ?? 0}">${speed}<span class="u">km/h</span></td>` +
         `<td class="c-route">${rideTraceIcon(r)}</td>` +
         `<td data-value="${r.moving_time_s}">${formatTime(r.moving_time_s)}</td>` +
         `</tr>`
