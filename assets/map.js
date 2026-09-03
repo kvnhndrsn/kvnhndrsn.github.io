@@ -86,7 +86,6 @@
     map.on("load", function () {
       try { bindOverlays(); } catch (e) {}
       try { addLayerControl(); } catch (e) {}
-      try { addLegend(); } catch (e) {}
       try { addDetailPanel(); } catch (e) {}
       addKeyboardHandler();
     });
@@ -493,82 +492,62 @@
     var ctrl = document.createElement("div");
     ctrl.className = "map-layer-control";
 
-    var sections = [
-      {
-        title: "Base map",
-        type: "radio",
-        items: BASEMAPS.map(function (b, i) {
-          return { key: b.key, label: b.name, checked: i === 0 };
-        }),
-        onChange: function (key) {
-          setBasemap(key);
-        },
-      },
-      {
-        title: "Layers",
-        type: "checkbox",
-        items: [
-          { key: "missing-streets", label: "Missing streets", color: MISSING_COLOR, checked: layerVis["missing-streets"] },
-          { key: "ridden-streets", label: "Ridden streets", color: RIDDEN_COLOR, checked: layerVis["ridden-streets"] },
-        ],
-        onChange: function (key, on) {
-          layerVis[key] = on;
-          if (map.getLayer(key)) {
-            map.setLayoutProperty(key, "visibility", on ? "visible" : "none");
-          }
-        },
-      },
-    ];
+    /* Base map dropdown */
+    var baseHeading = document.createElement("div");
+    baseHeading.className = "lc-heading";
+    baseHeading.textContent = "Base map";
+    ctrl.appendChild(baseHeading);
 
-    sections.forEach(function (sec) {
-      var heading = document.createElement("div");
-      heading.className = "lc-heading";
-      heading.textContent = sec.title;
-      ctrl.appendChild(heading);
+    var select = document.createElement("select");
+    select.className = "lc-select";
+    select.addEventListener("change", function () {
+      setBasemap(select.value);
+    });
+    BASEMAPS.forEach(function (b, i) {
+      var option = document.createElement("option");
+      option.value = b.key;
+      option.textContent = b.name;
+      if (i === 0) option.selected = true;
+      select.appendChild(option);
+    });
+    ctrl.appendChild(select);
 
-      sec.items.forEach(function (item) {
-        var label = document.createElement("label");
-        label.className = "lc-item";
-        var input = document.createElement("input");
-        input.type = sec.type === "radio" ? "radio" : "checkbox";
-        input.name = "lc-" + sec.title;
-        input.value = item.key;
-        input.checked = item.checked;
+    /* Layer toggles */
+    var layersHeading = document.createElement("div");
+    layersHeading.className = "lc-heading";
+    layersHeading.textContent = "Layers";
+    ctrl.appendChild(layersHeading);
 
-        input.addEventListener("change", function () {
-          if (sec.type === "radio") {
-            sec.onChange(item.key);
-          } else {
-            sec.onChange(item.key, input.checked);
-          }
-        });
+    [
+      { key: "missing-streets", label: "Missing streets", color: MISSING_COLOR },
+      { key: "ridden-streets", label: "Ridden streets", color: RIDDEN_COLOR },
+    ].forEach(function (item) {
+      var label = document.createElement("label");
+      label.className = "lc-item";
+      var input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = item.key;
+      input.checked = layerVis[item.key];
 
-        label.appendChild(input);
-        if (item.color) {
-          var swatch = document.createElement("span");
-          swatch.className = "lc-swatch";
-          swatch.style.background = item.color;
-          label.appendChild(swatch);
+      input.addEventListener("change", function () {
+        layerVis[item.key] = input.checked;
+        if (map.getLayer(item.key)) {
+          map.setLayoutProperty(item.key, "visibility", input.checked ? "visible" : "none");
         }
-        label.appendChild(document.createTextNode(" " + item.label));
-        ctrl.appendChild(label);
       });
+
+      label.appendChild(input);
+      if (item.color) {
+        var swatch = document.createElement("span");
+        swatch.className = "lc-swatch";
+        swatch.style.background = item.color;
+        label.appendChild(swatch);
+      }
+      label.appendChild(document.createTextNode(" " + item.label));
+      ctrl.appendChild(label);
     });
 
     map.getContainer().appendChild(ctrl);
-  }
-
-  /* ── Legend ───────────────────────────────────────────────── */
-
-  function addLegend() {
-    var legend = document.createElement("div");
-    legend.className = "map-legend";
-    legend.innerHTML =
-      '<div class="legend-title">#everystreet — Regina</div>' +
-      '<div class="legend-item"><span class="legend-swatch" style="border-top:3px solid ' + MISSING_COLOR + '"></span>Missing</div>' +
-      '<div class="legend-item"><span class="legend-swatch" style="border-top:3px solid ' + RIDDEN_COLOR + '"></span>Ridden</div>' +
-      '<div class="legend-item"><span class="legend-swatch" style="border-top:3px solid #7c3aed"></span>GPX tracks</div>';
-    map.getContainer().appendChild(legend);
   }
 
   /* ── Detail panel ────────────────────────────────────────── */

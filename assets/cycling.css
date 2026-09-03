@@ -319,38 +319,16 @@
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
-/* Legend (bottom-left) */
-.map-legend {
-  position: absolute;
-  bottom: 18px;
-  left: 10px;
-  z-index: 1000;
-  pointer-events: none;
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-  padding: 10px 14px;
-  font: 13px/1.5 -apple-system, sans-serif;
+.map-layer-control .lc-select {
+  width: 100%;
+  margin: 2px 0 6px;
+  padding: 4px 6px;
+  font: 13px/1.4 -apple-system, sans-serif;
   color: #111;
-}
-
-.map-legend .legend-title {
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.map-legend .legend-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 3px 0;
-}
-
-.map-legend .legend-swatch {
-  display: inline-block;
-  width: 28px;
-  font-size: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 /* Ride detail panel (bottom-right) */
