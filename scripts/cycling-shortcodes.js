@@ -46,6 +46,8 @@ function rideTable(rides) {
     ["Dist", "dist"],
     ["Elev", "elev"],
     ["Speed", "speed"],
+    ["Max", "maxspeed"],
+    ["Pace", "pace"],
     ["Route", null],
     ["Time", "time"],
   ];
@@ -62,7 +64,7 @@ function rideTable(rides) {
   if (!rides.length) {
     return (
       `<table class="ride-table" id="ride-table"><thead><tr>${head}</tr></thead>` +
-      `<tbody><tr><td colspan="6" class="ride-empty">No rides yet &mdash; drop GPX files into GPX_OUT/.</td></tr></tbody></table>`
+      `<tbody><tr><td colspan="8" class="ride-empty">No rides yet &mdash; drop GPX files into GPX_OUT/.</td></tr></tbody></table>`
     );
   }
 
@@ -71,12 +73,18 @@ function rideTable(rides) {
       const date = r.date || "";
       const speed =
         r.avg_speed_kmh != null ? r.avg_speed_kmh.toFixed(1) : "&mdash;";
+      const maxSpeed =
+        r.max_speed_kmh != null ? r.max_speed_kmh.toFixed(1) : "&mdash;";
+      const pace =
+        r.pace_min_km != null ? r.pace_min_km.toFixed(1) : "&mdash;";
       return (
         `<tr data-date="${date}" data-year="${date.slice(0, 4)}" data-ride-idx="${idx}">` +
         `<td class="c-date" data-value="${date}">${date}</td>` +
         `<td data-value="${r.distance_km}">${r.distance_km.toFixed(2)}<span class="u">km</span></td>` +
         `<td data-value="${r.elevation_gain_m}">${r.elevation_gain_m.toFixed(1)}<span class="u">m</span></td>` +
         `<td data-value="${r.avg_speed_kmh ?? 0}">${speed}<span class="u">km/h</span></td>` +
+        `<td data-value="${r.max_speed_kmh ?? 0}">${maxSpeed}<span class="u">km/h</span></td>` +
+        `<td data-value="${r.pace_min_km ?? 0}">${pace}<span class="u">min/km</span></td>` +
         `<td class="c-route">${rideTraceIcon(r)}</td>` +
         `<td data-value="${r.moving_time_s}">${formatTime(r.moving_time_s)}</td>` +
         `</tr>`

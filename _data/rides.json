@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-02 20:15",
+  "generated": "2026-09-02 20:56",
   "rides": [
     {
       "date": "2026-08-29",
@@ -7,6 +7,8 @@
       "distance_km": 57.49,
       "moving_time_s": 12658,
       "avg_speed_kmh": 16.3,
+      "max_speed_kmh": 25.6,
+      "pace_min_km": 3.7,
       "elevation_gain_m": 89.7,
       "trace": [
         [
@@ -8017,6 +8019,8 @@
       "distance_km": 5.97,
       "moving_time_s": 1338,
       "avg_speed_kmh": 16.1,
+      "max_speed_kmh": 22.3,
+      "pace_min_km": 3.7,
       "elevation_gain_m": 1.2,
       "trace": [
         [
@@ -9979,6 +9983,8 @@
       "distance_km": 18.87,
       "moving_time_s": 3733,
       "avg_speed_kmh": 18.2,
+      "max_speed_kmh": 27.5,
+      "pace_min_km": 3.3,
       "elevation_gain_m": 18.0,
       "trace": [
         [
@@ -15845,6 +15851,8 @@
       "distance_km": 12.93,
       "moving_time_s": 2547,
       "avg_speed_kmh": 18.3,
+      "max_speed_kmh": 27.2,
+      "pace_min_km": 3.3,
       "elevation_gain_m": 15.2,
       "trace": [
         [
@@ -19943,6 +19951,8 @@
       "distance_km": 25.53,
       "moving_time_s": 4692,
       "avg_speed_kmh": 19.6,
+      "max_speed_kmh": 28.2,
+      "pace_min_km": 3.1,
       "elevation_gain_m": 34.6,
       "trace": [
         [
@@ -27837,6 +27847,8 @@
       "distance_km": 108.14,
       "moving_time_s": 21958,
       "avg_speed_kmh": 17.7,
+      "max_speed_kmh": 29.5,
+      "pace_min_km": 3.4,
       "elevation_gain_m": 168.4,
       "trace": [
         [
@@ -35847,6 +35859,8 @@
       "distance_km": 85.27,
       "moving_time_s": 16784,
       "avg_speed_kmh": 18.3,
+      "max_speed_kmh": 27.3,
+      "pace_min_km": 3.3,
       "elevation_gain_m": 143.5,
       "trace": [
         [
@@ -43857,6 +43871,8 @@
       "distance_km": 45.98,
       "moving_time_s": 9227,
       "avg_speed_kmh": 17.9,
+      "max_speed_kmh": 25.5,
+      "pace_min_km": 3.3,
       "elevation_gain_m": 69.2,
       "trace": [
         [
@@ -51867,6 +51883,8 @@
       "distance_km": 52.17,
       "moving_time_s": 12802,
       "avg_speed_kmh": 14.7,
+      "max_speed_kmh": 26.7,
+      "pace_min_km": 4.1,
       "elevation_gain_m": 87.8,
       "trace": [
         [
@@ -59877,6 +59895,8 @@
       "distance_km": 36.84,
       "moving_time_s": 10237,
       "avg_speed_kmh": 13.0,
+      "max_speed_kmh": 24.3,
+      "pace_min_km": 4.6,
       "elevation_gain_m": 68.0,
       "trace": [
         [
@@ -67887,6 +67907,8 @@
       "distance_km": 13.42,
       "moving_time_s": 2807,
       "avg_speed_kmh": 17.2,
+      "max_speed_kmh": 23.3,
+      "pace_min_km": 3.5,
       "elevation_gain_m": 1.0,
       "trace": [
         [
@@ -72381,6 +72403,8 @@
       "distance_km": 13.4,
       "moving_time_s": 2404,
       "avg_speed_kmh": 20.1,
+      "max_speed_kmh": 26.4,
+      "pace_min_km": 3.0,
       "elevation_gain_m": 2.4,
       "trace": [
         [
@@ -76607,6 +76631,8 @@
       "distance_km": 72.71,
       "moving_time_s": 18197,
       "avg_speed_kmh": 14.4,
+      "max_speed_kmh": 20.4,
+      "pace_min_km": 4.2,
       "elevation_gain_m": 0.0,
       "trace": [
         [
@@ -84617,6 +84643,8 @@
       "distance_km": 42.4,
       "moving_time_s": 12445,
       "avg_speed_kmh": 12.3,
+      "max_speed_kmh": 18.3,
+      "pace_min_km": 4.9,
       "elevation_gain_m": 0.0,
       "trace": [
         [
@@ -92627,6 +92655,8 @@
       "distance_km": 28.23,
       "moving_time_s": 8481,
       "avg_speed_kmh": 12.0,
+      "max_speed_kmh": 17.4,
+      "pace_min_km": 5.0,
       "elevation_gain_m": 0.0,
       "trace": [
         [

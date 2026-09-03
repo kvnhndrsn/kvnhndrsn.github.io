@@ -96,8 +96,11 @@ def ride_from_file(fp):
 
     start = local_datetime(pts[0].time)
     distance_km = gpx.length_2d() / 1000.0
-    moving_time_s = gpx.get_moving_data().moving_time
+    moving = gpx.get_moving_data()
+    moving_time_s = moving.moving_time
     avg_speed_kmh = (distance_km / moving_time_s * 3600.0) if moving_time_s else None
+    max_speed_kmh = (moving.max_speed * 3.6) if moving.max_speed else None
+    pace_min_km = (moving_time_s / 60.0 / distance_km) if (moving_time_s and distance_km) else None
 
     trace = [[round(p.latitude, 6), round(p.longitude, 6)]
              for p in simplify(pts)]
@@ -108,6 +111,8 @@ def ride_from_file(fp):
         "distance_km": round(distance_km, 2),
         "moving_time_s": int(moving_time_s),
         "avg_speed_kmh": round(avg_speed_kmh, 1) if avg_speed_kmh else None,
+        "max_speed_kmh": round(max_speed_kmh, 1) if max_speed_kmh else None,
+        "pace_min_km": round(pace_min_km, 1) if pace_min_km else None,
         "elevation_gain_m": round(elevation_gain(pts), 1),
         "trace": trace,
     }
