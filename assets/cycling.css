@@ -263,8 +263,8 @@
 /* Layer control (top-right, below nav) */
 .map-layer-control {
   position: absolute;
-  top: 72px;
-  left: 10px;
+  top: 10px;
+  right: 10px;
   z-index: 1000;
   pointer-events: auto;
   background: rgba(255, 255, 255, 0.7);
