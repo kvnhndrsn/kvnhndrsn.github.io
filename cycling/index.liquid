@@ -6,8 +6,10 @@ title: Cycling
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <link rel="stylesheet" href="/assets/cycling.css">
 
-<h1 class="page-title">Cycling</h1>
-<p class="page-intro">Every ride, from raw GPX. Updated automatically on build.</p>
+<h1 class="page-title">Kevin Cycles</h1>
+<p class="page-intro">
+  <a href="/bicycles/">Bicycles &rarr;</a>
+</p>
 
 {% rideSummary rides.rides %}
 
@@ -43,7 +45,6 @@ title: Cycling
 
 <h2 class="section-title">Activity heatmap</h2>
 {% heatmap rides.rides %}
-<p class="heatmap-hint">Click a day to highlight that ride in the table above.</p>
 
 {% ridesData rides.rides %}
 
