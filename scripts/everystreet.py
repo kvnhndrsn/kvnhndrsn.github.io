@@ -249,6 +249,13 @@ def make_map(edges_m, rides_wgs, stats, routes_wgs=None, out_fp=None):
 
 
 def export_geojson(edges_m, routes_wgs, bn_dir):
+    def clean_name(v):
+        # GeoPandas yields NaN floats for unnamed OSM ways; JSON has no NaN,
+        # so normalise to a string or the browser fails to parse the file.
+        if v is None or v == "" or (isinstance(v, float) and v != v):
+            return "(unnamed)"
+        return v
+
     data_dir = bn_dir / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
     miss = edges_m[~edges_m.ridden].to_crs("EPSG:4326")
@@ -258,7 +265,7 @@ def export_geojson(edges_m, routes_wgs, bn_dir):
         coords = [[round(x, 5), round(y, 5)] for x, y in row.geometry.coords]
         miss_feats.append({
             "type": "Feature",
-            "properties": {"name": row.name or "(unnamed)", "highway": row.highway},
+            "properties": {"name": clean_name(row.name), "highway": row.highway},
             "geometry": {"type": "LineString", "coordinates": coords},
         })
     ride_feats = []
@@ -266,7 +273,7 @@ def export_geojson(edges_m, routes_wgs, bn_dir):
         coords = [[round(x, 5), round(y, 5)] for x, y in row.geometry.coords]
         ride_feats.append({
             "type": "Feature",
-            "properties": {"name": row.name or "(unnamed)", "highway": row.highway},
+            "properties": {"name": clean_name(row.name), "highway": row.highway},
             "geometry": {"type": "LineString", "coordinates": coords},
         })
     for name, feats in [("missing-streets", miss_feats), ("ridden-streets", ride_feats)]:
@@ -281,7 +288,7 @@ def export_geojson(edges_m, routes_wgs, bn_dir):
             coords = [[round(x, 5), round(y, 5)] for x, y in row.geometry.coords]
             r_feats.append({
                 "type": "Feature",
-                "properties": {"name": row.name, "chunk_km": row.chunk_km},
+                "properties": {"name": clean_name(row.name), "chunk_km": row.chunk_km},
                 "geometry": {"type": "LineString", "coordinates": coords},
             })
         fp = data_dir / "planned-routes.geojson"

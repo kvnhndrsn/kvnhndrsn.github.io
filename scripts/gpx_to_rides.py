@@ -18,7 +18,7 @@ from zoneinfo import ZoneInfo
 import gpxpy.gpx
 
 LOCAL_TZ = ZoneInfo("America/Regina")
-MAX_TRACE_POINTS = 200
+MAX_TRACE_POINTS = 2000
 
 
 def local_datetime(spot_time):

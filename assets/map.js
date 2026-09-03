@@ -2,29 +2,41 @@
 (function () {
   "use strict";
 
-  var TILES = {
-    osm: {
+  /* Free basemaps — no API key required.
+     dark / light / bright are OpenFreeMap vector styles (community-funded).
+     osm / satellite are raster tile servers. */
+  var BASEMAPS = [
+    {
+      key: "dark",
+      name: "Dark",
+      vector: "https://tiles.openfreemap.org/styles/dark",
+    },
+    {
+      key: "light",
+      name: "Light",
+      vector: "https://tiles.openfreemap.org/styles/positron",
+    },
+    {
+      key: "bright",
+      name: "Bright",
+      vector: "https://tiles.openfreemap.org/styles/bright",
+    },
+    {
+      key: "osm",
       name: "OSM",
       tiles: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
       maxzoom: 18,
       attribution: "&copy; OpenStreetMap contributors",
     },
-    cyclosm: {
-      name: "CyclOSM",
-      tiles: "https://a.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
-      maxzoom: 19,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors, <a href="https://www.cyclosm.org">CyclOSM</a>',
-    },
-    satellite: {
+    {
+      key: "satellite",
       name: "Satellite",
       tiles:
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       maxzoom: 19,
       attribution: "Tiles &copy; Esri",
     },
-  };
-
+  ];
   var RIDE_COLORS = [
     "#7c3aed", "#2563eb", "#0891b2", "#059669", "#d97706",
     "#dc2626", "#db2777", "#9333ea", "#4f46e5", "#0d9488",
@@ -34,7 +46,18 @@
   var MISSING_COLOR = "#e8442a";
   var RIDDEN_COLOR = "#0f9d58";
 
-  var map, selectedRideIdx = null, detailPanel, legend, rideCoords = {}, allRides = [], rideLayerByIndex = {};
+  /* Street layer visibility state — OFF by default. Only rendered when the
+     matching layer-control checkbox is toggled on. */
+  var layerVis = { "missing-streets": false, "ridden-streets": false };
+
+  var map,
+    selectedRideIdx = null,
+    hoverRideIdx = null,
+    interactionBound = false,
+    detailPanel,
+    allRides = [],
+    rideCoords = {},
+    rideLayerByIndex = {};
 
   function init() {
     var container = document.getElementById("map");
@@ -43,7 +66,7 @@
     try {
       map = new maplibregl.Map({
         container: container,
-        style: { version: 8, sources: {}, layers: [] },
+        style: styleSpecFor(BASEMAPS[0]),
         center: [-104.65, 50.45],
         zoom: 12,
         maxZoom: 19,
@@ -55,125 +78,146 @@
 
     map.addControl(new maplibregl.NavigationControl(), "top-right");
 
+    parseRides();
+
+    /* Initial overlays: bind once the first style is usable. The `load`
+       event fires reliably on first render; basemap changes are handled
+       separately in setBasemap(). */
     map.on("load", function () {
-      try {
-        addTileLayers();
-      } catch (e) {}
-      try {
-        loadStreetCoverage();
-      } catch (e) {}
-      try {
-        loadRides();
-      } catch (e) {}
-      try {
-        addLayerControl();
-      } catch (e) {}
-      try {
-        addLegend();
-      } catch (e) {}
-      try {
-        addDetailPanel();
-      } catch (e) {}
+      try { bindOverlays(); } catch (e) {}
+      try { addLayerControl(); } catch (e) {}
+      try { addLegend(); } catch (e) {}
+      try { addDetailPanel(); } catch (e) {}
       addKeyboardHandler();
     });
 
     window.selectRideByIndex = selectRideByIndex;
+    window.showAllRides = showAllRides;
   }
 
-  /* ── Tile layers ─────────────────────────────────────────── */
+  function styleSpecFor(bm) {
+    if (bm.vector) return bm.vector;
+    /* Raster basemaps need a minimal inline style. */
+    return {
+      version: 8,
+      sources: {
+        "basemap-raster": {
+          type: "raster",
+          tiles: [bm.tiles],
+          tileSize: 256,
+          maxzoom: bm.maxzoom,
+          attribution: bm.attribution,
+        },
+      },
+      layers: [
+        { id: "basemap-raster", type: "raster", source: "basemap-raster" },
+      ],
+    };
+  }
 
-  function addTileLayers() {
-    var keys = Object.keys(TILES);
-    keys.forEach(function (key, i) {
-      var t = TILES[key];
-      if (map.getSource("tile-" + key)) return;
-      map.addSource("tile-" + key, {
-        type: "raster",
-        tiles: [t.tiles],
-        maxzoom: t.maxzoom,
-        tileSize: 256,
-        attribution: t.attribution,
+  function setBasemap(key) {
+    var bm = BASEMAPS.find(function (b) { return b.key === key; });
+    if (!bm) return;
+    map.setStyle(styleSpecFor(bm));
+    /* setStyle() replaces the whole style but does not reliably re-fire
+       `load`/`style.load`, so re-bind overlay layers once the new style is
+       ready. */
+    waitForStyleThen(bm, bindOverlays);
+  }
+
+  function waitForStyleThen(bm, cb) {
+    /* Detect that the target style has actually loaded by polling for its
+       distinctive source (openmaptiles for vector basemaps, basemap-raster
+       for raster basemaps). Source presence is set as soon as the style JSON
+       loads, independent of whether the tiles themselves download. */
+    var sentinel = bm.vector ? "openmaptiles" : "basemap-raster";
+    var tries = 0;
+    var timer = setInterval(function () {
+      tries++;
+      var style = map.getStyle();
+      if (style && style.sources && style.sources[sentinel]) {
+        clearInterval(timer);
+        try { cb(); } catch (e) {}
+      } else if (tries > 400) {
+        /* ~20s safety timeout */
+        clearInterval(timer);
+      }
+    }, 50);
+  }
+
+  /* ── Overlays: streets + rides ───────────────────────────── */
+
+  function bindOverlays() {
+    bindStreetLayers();
+    bindRideLayers();
+    /* Restore the selected ride's emphasis after a style swap. */
+    if (selectedRideIdx !== null && rideCoords[selectedRideIdx]) {
+      var idx = selectedRideIdx;
+      Object.keys(rideLayerByIndex).forEach(function (other) {
+        if (parseInt(other, 10) === idx) return;
+        if (map.getLayer("ride-" + other)) {
+          map.setPaintProperty("ride-" + other, "line-opacity", 0.12);
+          map.setPaintProperty("ride-" + other, "line-width", 1.2);
+        }
       });
-      map.addLayer({
-        id: "tile-" + key,
-        type: "raster",
-        source: "tile-" + key,
-        paint: { "raster-opacity": i === 0 ? 1 : 0 },
-      });
+      if (map.getLayer("ride-" + idx)) {
+        map.setPaintProperty("ride-" + idx, "line-width", 3.2);
+        map.setPaintProperty("ride-" + idx, "line-opacity", 1);
+      }
+      if (map.getLayer("ride-bg-" + idx)) {
+        map.setPaintProperty("ride-bg-" + idx, "line-opacity", 0.3);
+      }
+    }
+  }
+
+  function bindStreetLayers() {
+    addStreetLayer("missing-streets",
+      "/everystreet/data/missing-streets.geojson", MISSING_COLOR, 2.2,
+      { visibility: layerVis["missing-streets"] ? "visible" : "none" });
+    addStreetLayer("ridden-streets",
+      "/everystreet/data/ridden-streets.geojson", RIDDEN_COLOR, 2.2,
+      { visibility: layerVis["ridden-streets"] ? "visible" : "none" });
+  }
+
+  function addStreetLayer(id, url, color, width, opts) {
+    opts = opts || {};
+    if (map.getSource(id)) return;
+    map.addSource(id, { type: "geojson", data: url });
+    map.addLayer({
+      id: id,
+      type: "line",
+      source: id,
+      layout: {
+        "line-join": "round",
+        "line-cap": "round",
+        visibility: opts.visibility || "visible",
+      },
+      paint: {
+        "line-color": color,
+        "line-width": width,
+        "line-opacity": opts.opacity != null ? opts.opacity : 0.95,
+        ...(opts.dash ? { "line-dasharray": opts.dash } : {}),
+      },
     });
   }
 
-  /* ── Street coverage layers ──────────────────────────────── */
-
-  function loadStreetCoverage() {
-    loadGeoJSON("/everystreet/data/missing-streets.geojson", function (fc) {
-      map.addSource("missing-streets", { type: "geojson", data: fc });
-      map.addLayer({
-        id: "missing-streets",
-        type: "line",
-        source: "missing-streets",
-        layout: { "line-join": "round", "line-cap": "round" },
-        paint: {
-          "line-color": MISSING_COLOR,
-          "line-width": 2.5,
-          "line-opacity": 0.95,
-        },
-      });
-    });
-
-    loadGeoJSON("/everystreet/data/ridden-streets.geojson", function (fc) {
-      map.addSource("ridden-streets", { type: "geojson", data: fc });
-      map.addLayer({
-        id: "ridden-streets",
-        type: "line",
-        source: "ridden-streets",
-        layout: { "line-join": "round", "line-cap": "round" },
-        paint: {
-          "line-color": RIDDEN_COLOR,
-          "line-width": 2.5,
-          "line-opacity": 0.9,
-        },
-      });
-    });
-
-    loadGeoJSON("/everystreet/data/planned-routes.geojson", function (fc) {
-      if (!fc || !fc.features || !fc.features.length) return;
-      map.addSource("planned-routes", { type: "geojson", data: fc });
-      map.addLayer({
-        id: "planned-routes",
-        type: "line",
-        source: "planned-routes",
-        layout: {
-          "line-join": "round",
-          "line-cap": "round",
-          visibility: "none",
-        },
-        paint: {
-          "line-color": "#2563eb",
-          "line-width": 3.5,
-          "line-opacity": 0.95,
-          "line-dasharray": [7, 9],
-        },
-      });
-    });
-  }
-
-  /* ── Ride traces ─────────────────────────────────────────── */
-
-  function loadRides() {
+  function parseRides() {
     var el = document.getElementById("rides-data");
     if (!el) return;
-    var rides;
     try {
-      rides = JSON.parse(el.textContent);
+      var rides = JSON.parse(el.textContent);
     } catch (e) {
       return;
     }
     if (!rides || !rides.length) return;
     allRides = rides;
-    rideLayerByIndex = {};
+  }
 
-    rides.forEach(function (ride, idx) {
+  function bindRideLayers() {
+    rideLayerByIndex = {};
+    rideCoords = {};
+
+    allRides.forEach(function (ride, idx) {
       if (!ride.trace || ride.trace.length < 2) return;
       var coords = ride.trace.map(function (p) {
         return [p[1], p[0]];
@@ -207,7 +251,7 @@
         layout: { "line-join": "round", "line-cap": "round" },
         paint: {
           "line-color": color,
-          "line-width": 6,
+          "line-width": 4,
           "line-opacity": 0,
         },
       });
@@ -219,21 +263,24 @@
         layout: { "line-join": "round", "line-cap": "round" },
         paint: {
           "line-color": color,
-          "line-width": 2.5,
+          "line-width": 1.6,
           "line-opacity": 0.75,
         },
       });
     });
 
-    addRideInteraction(rides);
+    addRideInteraction();
   }
 
   /* ── Ride click interaction ──────────────────────────────── */
 
-  function addRideInteraction(rides) {
+  function addRideInteraction() {
+    if (interactionBound) return;
+    interactionBound = true;
+
     var rideLayerIds = [];
-    rides.forEach(function (_, idx) {
-      if (map.getLayer("ride-" + idx)) rideLayerIds.push("ride-" + idx);
+    Object.keys(rideLayerByIndex).forEach(function (k) {
+      if (map.getLayer("ride-" + k)) rideLayerIds.push("ride-" + k);
     });
 
     map.on("click", rideLayerIds, function (e) {
@@ -244,16 +291,32 @@
       if (selectedRideIdx === idx) {
         deselectRide();
       } else {
-        selectRide(idx, rides[idx]);
+        selectRide(idx, allRides[idx]);
       }
     });
 
-    map.on("mouseenter", rideLayerIds, function () {
+    /* Hover: emphasise the ride under the cursor and show a pointer so it is
+       obvious the trace can be clicked. */
+    map.on("mouseenter", rideLayerIds, function (e) {
+      if (!e.features || !e.features.length) return;
+      var k = e.features[0].properties.idx;
+      if (typeof k === "string") k = parseInt(k, 10);
+      hoverRideIdx = k;
       map.getCanvas().style.cursor = "pointer";
+      if (map.getLayer("ride-" + k)) {
+        map.setPaintProperty("ride-" + k, "line-width", 5);
+        map.setPaintProperty("ride-" + k, "line-opacity", 1);
+      }
+      if (map.getLayer("ride-bg-" + k)) {
+        map.setPaintProperty("ride-bg-" + k, "line-opacity", 0.5);
+      }
     });
-
     map.on("mouseleave", rideLayerIds, function () {
       map.getCanvas().style.cursor = "";
+      if (hoverRideIdx !== null) {
+        paintRideIdle(hoverRideIdx);
+        hoverRideIdx = null;
+      }
     });
 
     map.on("click", function (e) {
@@ -263,8 +326,7 @@
 
     map.on("click", "missing-streets", function (e) {
       if (!e.features || !e.features.length) return;
-      var f = e.features[0];
-      var name = f.properties.name || "(unnamed)";
+      var name = e.features[0].properties.name || "(unnamed)";
       new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(
@@ -278,8 +340,7 @@
 
     map.on("click", "ridden-streets", function (e) {
       if (!e.features || !e.features.length) return;
-      var f = e.features[0];
-      var name = f.properties.name || "(unnamed)";
+      var name = e.features[0].properties.name || "(unnamed)";
       new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(
@@ -297,7 +358,7 @@
     });
     map.on("mouseleave", "missing-streets", function () {
       map.getCanvas().style.cursor = "";
-      map.setPaintProperty("missing-streets", "line-width", 2.5);
+      map.setPaintProperty("missing-streets", "line-width", 2.2);
     });
     map.on("mouseenter", "ridden-streets", function () {
       map.getCanvas().style.cursor = "pointer";
@@ -305,17 +366,45 @@
     });
     map.on("mouseleave", "ridden-streets", function () {
       map.getCanvas().style.cursor = "";
-      map.setPaintProperty("ridden-streets", "line-width", 2.5);
+      map.setPaintProperty("ridden-streets", "line-width", 2.2);
     });
+  }
+
+  /* Set a ride's line back to its idle or selected emphasis. */
+  function paintRideIdle(idx) {
+    var selected = idx === selectedRideIdx;
+    if (map.getLayer("ride-" + idx)) {
+      map.setPaintProperty("ride-" + idx, "line-width", selected ? 3.2 : 1.6);
+      map.setPaintProperty("ride-" + idx, "line-opacity", selected ? 1 : 0.75);
+    }
+    if (map.getLayer("ride-bg-" + idx)) {
+      map.setPaintProperty("ride-bg-" + idx, "line-opacity", selected ? 0.3 : 0);
+    }
   }
 
   function selectRide(idx, ride) {
     deselectRide();
     selectedRideIdx = idx;
 
-    map.setPaintProperty("ride-" + idx, "line-width", 5);
-    map.setPaintProperty("ride-" + idx, "line-opacity", 1);
-    map.setPaintProperty("ride-bg-" + idx, "line-opacity", 0.25);
+    /* Dim/hide every other ride so the selected one stands out. */
+    Object.keys(rideLayerByIndex).forEach(function (other) {
+      if (parseInt(other, 10) === idx) return;
+      if (map.getLayer("ride-" + other)) {
+        map.setPaintProperty("ride-" + other, "line-opacity", 0.12);
+        map.setPaintProperty("ride-" + other, "line-width", 1.2);
+      }
+      if (map.getLayer("ride-bg-" + other)) {
+        map.setPaintProperty("ride-bg-" + other, "line-opacity", 0);
+      }
+    });
+
+    if (map.getLayer("ride-" + idx)) {
+      map.setPaintProperty("ride-" + idx, "line-width", 3.2);
+      map.setPaintProperty("ride-" + idx, "line-opacity", 1);
+    }
+    if (map.getLayer("ride-bg-" + idx)) {
+      map.setPaintProperty("ride-bg-" + idx, "line-opacity", 0.3);
+    }
 
     var coords = rideCoords[idx] || [];
     if (!coords.length) return;
@@ -332,12 +421,27 @@
     if (selectedRideIdx === null) return;
     var idx = selectedRideIdx;
     if (map.getLayer("ride-" + idx)) {
-      map.setPaintProperty("ride-" + idx, "line-width", 2.5);
+      map.setPaintProperty("ride-" + idx, "line-width", 1.6);
       map.setPaintProperty("ride-" + idx, "line-opacity", 0.75);
+    }
+    if (map.getLayer("ride-bg-" + idx)) {
       map.setPaintProperty("ride-bg-" + idx, "line-opacity", 0);
     }
     selectedRideIdx = null;
     hideRideDetail();
+    showAllRides();
+  }
+
+  function showAllRides() {
+    Object.keys(rideLayerByIndex).forEach(function (k) {
+      if (map.getLayer("ride-" + k)) {
+        map.setPaintProperty("ride-" + k, "line-width", 1.6);
+        map.setPaintProperty("ride-" + k, "line-opacity", 0.75);
+      }
+      if (map.getLayer("ride-bg-" + k)) {
+        map.setPaintProperty("ride-bg-" + k, "line-opacity", 0);
+      }
+    });
   }
 
   function showRideDetail(ride, idx) {
@@ -358,9 +462,11 @@
         '<div><span class="rd-label">Elevation</span><span class="rd-value">' + elev + " m</span></div>" +
         '<div><span class="rd-label">Avg speed</span><span class="rd-value">' + speed + " km/h</span></div>" +
         '<div><span class="rd-label">Time</span><span class="rd-value">' + time + "</span></div>" +
-      "</div>";
+      "</div>" +
+      '<button class="ride-detail-showall" type="button">Show all rides</button>';
     detailPanel.classList.add("visible");
     detailPanel.querySelector(".ride-detail-close").addEventListener("click", deselectRide);
+    detailPanel.querySelector(".ride-detail-showall").addEventListener("click", deselectRide);
   }
 
   function hideRideDetail() {
@@ -391,24 +497,22 @@
       {
         title: "Base map",
         type: "radio",
-        items: Object.keys(TILES).map(function (key, i) {
-          return { key: key, label: TILES[key].name, checked: i === 0 };
+        items: BASEMAPS.map(function (b, i) {
+          return { key: b.key, label: b.name, checked: i === 0 };
         }),
         onChange: function (key) {
-          Object.keys(TILES).forEach(function (k) {
-            map.setPaintProperty("tile-" + k, "raster-opacity", k === key ? 1 : 0);
-          });
+          setBasemap(key);
         },
       },
       {
         title: "Layers",
         type: "checkbox",
         items: [
-          { key: "missing-streets", label: "Missing streets", color: MISSING_COLOR, checked: true },
-          { key: "ridden-streets", label: "Ridden streets", color: RIDDEN_COLOR, checked: true },
-          { key: "planned-routes", label: "Planned routes", color: "#2563eb", checked: false },
+          { key: "missing-streets", label: "Missing streets", color: MISSING_COLOR, checked: layerVis["missing-streets"] },
+          { key: "ridden-streets", label: "Ridden streets", color: RIDDEN_COLOR, checked: layerVis["ridden-streets"] },
         ],
         onChange: function (key, on) {
+          layerVis[key] = on;
           if (map.getLayer(key)) {
             map.setLayoutProperty(key, "visibility", on ? "visible" : "none");
           }
@@ -428,8 +532,7 @@
         var input = document.createElement("input");
         input.type = sec.type === "radio" ? "radio" : "checkbox";
         input.name = "lc-" + sec.title;
-        if (sec.type === "radio") input.value = item.key;
-        else input.value = item.key;
+        input.value = item.key;
         input.checked = item.checked;
 
         input.addEventListener("change", function () {
@@ -458,13 +561,12 @@
   /* ── Legend ───────────────────────────────────────────────── */
 
   function addLegend() {
-    legend = document.createElement("div");
+    var legend = document.createElement("div");
     legend.className = "map-legend";
     legend.innerHTML =
       '<div class="legend-title">#everystreet — Regina</div>' +
       '<div class="legend-item"><span class="legend-swatch" style="border-top:3px solid ' + MISSING_COLOR + '"></span>Missing</div>' +
       '<div class="legend-item"><span class="legend-swatch" style="border-top:3px solid ' + RIDDEN_COLOR + '"></span>Ridden</div>' +
-      '<div class="legend-item"><span class="legend-swatch" style="border-top:3px dashed #2563eb"></span>Planned</div>' +
       '<div class="legend-item"><span class="legend-swatch" style="border-top:3px solid #7c3aed"></span>GPX tracks</div>';
     map.getContainer().appendChild(legend);
   }
@@ -486,22 +588,6 @@
   }
 
   /* ── Helpers ─────────────────────────────────────────────── */
-
-  function loadGeoJSON(url, cb) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.onload = function () {
-      if (xhr.status >= 200 && xhr.status < 400) {
-        try {
-          cb(JSON.parse(xhr.responseText));
-        } catch (e) {
-          /* skip malformed */
-        }
-      }
-    };
-    xhr.onerror = function () {};
-    xhr.send();
-  }
 
   function formatTime(s) {
     if (!s || s <= 0) return "—";
