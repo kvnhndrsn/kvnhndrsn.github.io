@@ -274,9 +274,9 @@
   left: 10px;
   z-index: 1000;
   pointer-events: auto;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.25);
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
   padding: 8px 10px;
   font: 13px/1.4 -apple-system, sans-serif;
@@ -440,6 +440,32 @@
   color: #111;
 }
 
+/* Transparent zoom controls + attribution so they blend with the map like
+   the layer control */
+.maplibre-map .maplibregl-ctrl-group {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+.maplibre-map .maplibregl-ctrl-group button {
+  background-color: transparent;
+}
+
+.maplibre-map .maplibregl-ctrl-group button:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.maplibre-map .maplibregl-ctrl-attrib {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+.maplibre-map .maplibregl-ctrl-attrib a {
+  color: #111;
+}
+
 .everystreet-mini {
   display: flex;
   gap: 1.2rem;
@@ -450,6 +476,21 @@
   border-radius: 10px;
   padding: 0.8rem 1rem;
   margin-top: 0.8rem;
+}
+
+.everystreet-attribution {
+  font-size: 0.72rem;
+  opacity: 0.6;
+  margin: 0.4rem 0 0;
+}
+
+.everystreet-attribution a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.everystreet-attribution a:hover {
+  text-decoration: underline;
 }
 
 .ring {

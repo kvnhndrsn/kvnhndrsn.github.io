@@ -45,10 +45,11 @@
 
   var MISSING_COLOR = "#e8442a";
   var RIDDEN_COLOR = "#0f9d58";
+  var GPX_COLOR = "#7c3aed";
 
   /* Street layer visibility state — OFF by default. Only rendered when the
      matching layer-control checkbox is toggled on. */
-  var layerVis = { "missing-streets": false, "ridden-streets": false };
+  var layerVis = { "missing-streets": false, "ridden-streets": false, "gpx-routes": true };
 
   var map,
     selectedRideIdx = null,
@@ -178,6 +179,17 @@
       { visibility: layerVis["ridden-streets"] ? "visible" : "none" });
   }
 
+  /* Show/hide every GPX ride layer at once (used by the layer-control toggle). */
+  function setRideLayersVisibility(show) {
+    Object.keys(rideLayerByIndex).forEach(function (k) {
+      ["ride-" + k, "ride-bg-" + k].forEach(function (id) {
+        if (map.getLayer(id)) {
+          map.setLayoutProperty(id, "visibility", show ? "visible" : "none");
+        }
+      });
+    });
+  }
+
   function addStreetLayer(id, url, color, width, opts) {
     opts = opts || {};
     if (map.getSource(id)) return;
@@ -269,6 +281,7 @@
     });
 
     addRideInteraction();
+    if (!layerVis["gpx-routes"]) setRideLayersVisibility(false);
   }
 
   /* ── Ride click interaction ──────────────────────────────── */
@@ -521,6 +534,7 @@
     [
       { key: "missing-streets", label: "Missing streets", color: MISSING_COLOR },
       { key: "ridden-streets", label: "Ridden streets", color: RIDDEN_COLOR },
+      { key: "gpx-routes", label: "My GPX routes", color: GPX_COLOR },
     ].forEach(function (item) {
       var label = document.createElement("label");
       label.className = "lc-item";
@@ -531,7 +545,9 @@
 
       input.addEventListener("change", function () {
         layerVis[item.key] = input.checked;
-        if (map.getLayer(item.key)) {
+        if (item.key === "gpx-routes") {
+          setRideLayersVisibility(input.checked);
+        } else if (map.getLayer(item.key)) {
           map.setLayoutProperty(item.key, "visibility", input.checked ? "visible" : "none");
         }
       });
