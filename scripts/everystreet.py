@@ -312,9 +312,12 @@ def export_rides_combined(rides_wgs, bn_dir, simplify_m=8.0):
     rides_m = rides_wgs.to_crs(crs)
     geoms = [g.simplify(simplify_m) for g in rides_m.geometry]
     merged = union_all(geoms)
-    parts = list(getattr(merged, "geoms", [merged]))
-    lines = [[[round(x, 5), round(y, 5)] for x, y in part.coords]
-             for part in parts]
+    # The union is in metres; reproject back to lon/lat before exporting.
+    merged_wgs = (gpd.GeoDataFrame(geometry=list(getattr(merged, "geoms", [merged])),
+                                   crs=crs)
+                  .to_crs("EPSG:4326"))
+    lines = [[[round(x, 5), round(y, 5)] for x, y in g.coords]
+             for g in merged_wgs.geometry]
     fp = data_dir / "rides-combined.geojson"
     fp.write_text(json.dumps({
         "type": "FeatureCollection",

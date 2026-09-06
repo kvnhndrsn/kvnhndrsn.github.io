@@ -101,7 +101,7 @@ function allRoutesIcon(rides) {
         .map(([x, y], j) => (j === 0 ? "M" : "L") + x.toFixed(1) + " " + y.toFixed(1))
         .join("");
       const color = ROUTE_PALETTE[i % ROUTE_PALETTE.length];
-      return `<path d="${d}" stroke="${color}" />`;
+      return `<path d="${d}" stroke="${color}" vector-effect="non-scaling-stroke" />`;
     })
     .join("");
 

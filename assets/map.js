@@ -62,8 +62,7 @@
     rideCoords = {},
     rideLayerByIndex = {},
     gpxToggleInput = null,
-    yearSelect = null,
-    maxSpeedMarker = null;
+    yearSelect = null;
 
   function init() {
     var container = document.getElementById("map");
@@ -184,8 +183,8 @@
       { visibility: layerVis["ridden-streets"] ? "visible" : "none" });
     /* Everything you've ridden, merged into one overlay. */
     addStreetLayer("rides-combined",
-      "/everystreet/data/rides-combined.geojson", COMBINED_COLOR, 1.2,
-      { visibility: layerVis["rides-combined"] ? "visible" : "none", opacity: 0.75 });
+      "/everystreet/data/rides-combined.geojson", COMBINED_COLOR, 1.8,
+      { visibility: layerVis["rides-combined"] ? "visible" : "none", opacity: 0.85 });
   }
 
   /* Show/hide every GPX ride layer, honouring both the "My GPX routes"
@@ -467,7 +466,6 @@
     map.fitBounds(bounds, { padding: 80, maxZoom: 15, duration: 800 });
 
     showRideDetail(ride, idx);
-    showMaxSpeedMarker(ride);
   }
 
   function deselectRide() {
@@ -482,7 +480,6 @@
     }
     selectedRideIdx = null;
     hideRideDetail();
-    clearMaxSpeedMarker();
     showAllRides();
   }
 
@@ -504,7 +501,6 @@
     var dist = ride.distance_km != null ? ride.distance_km.toFixed(1) : "—";
     var elev = ride.elevation_gain_m != null ? Math.round(ride.elevation_gain_m) : "—";
     var speed = ride.avg_speed_kmh != null ? ride.avg_speed_kmh.toFixed(1) : "—";
-    var maxSpeed = ride.max_speed_kmh != null ? ride.max_speed_kmh.toFixed(1) : "—";
     var time = formatTime(ride.moving_time_s);
     detailPanel.innerHTML =
       '<div class="ride-detail-header">' +
@@ -517,7 +513,6 @@
         '<div><span class="rd-label">Elev gain</span><span class="rd-value">' + elev + " m</span></div>" +
         '<div><span class="rd-label">Avg speed</span><span class="rd-value">' + speed + " km/h</span></div>" +
         '<div><span class="rd-label">Time</span><span class="rd-value">' + time + "</span></div>" +
-        '<div><span class="rd-label">Max speed</span><span class="rd-value">' + maxSpeed + " km/h</span></div>" +
       "</div>" +
       '<button class="ride-detail-showall" type="button">Show all rides</button>';
     detailPanel.classList.add("visible");
@@ -527,34 +522,6 @@
 
   function hideRideDetail() {
     if (detailPanel) detailPanel.classList.remove("visible");
-  }
-
-  /* ── Top-speed marker ────────────────────────────────────── */
-
-  function showMaxSpeedMarker(ride) {
-    clearMaxSpeedMarker();
-    if (!ride || ride.max_speed_kmh == null ||
-        !ride.max_speed_point || ride.max_speed_point.length < 2) return;
-    var el = document.createElement("div");
-    el.className = "ride-maxspeed-marker";
-    el.title = "Top speed: " + ride.max_speed_kmh.toFixed(1) + " km/h";
-    var popup = new maplibregl.Popup({ closeButton: false, offset: [0, -16], className: "ride-maxspeed-popup" })
-      .setHTML(
-        '<div style="font:13px/1.4 sans-serif;padding:2px 8px">' +
-          '<strong>' + ride.max_speed_kmh.toFixed(1) + " km/h</strong>" +
-          '<span style="color:#555"> top speed</span>' +
-        "</div>"
-      );
-    maxSpeedMarker = new maplibregl.Marker({ element: el, anchor: "bottom" })
-      .setLngLat([ride.max_speed_point[1], ride.max_speed_point[0]])
-      .setPopup(popup)
-      .addTo(map);
-    popup.addTo(map);
-  }
-
-  function clearMaxSpeedMarker() {
-    if (maxSpeedMarker) maxSpeedMarker.remove();
-    maxSpeedMarker = null;
   }
 
   /* ── External entry point (used by table/heatmap clicks) ── */
