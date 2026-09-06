@@ -43,6 +43,65 @@ def simplify(points, n=MAX_TRACE_POINTS):
 
 
 M_PER_DEG = 111320.0
+R_EARTH_M = 6371000.0
+STOPPED_KMH = 1.0
+IGNORE_TOP_SPEED_PERCENTILES = 0.05
+
+
+def haversine_m(p1, p2):
+    """Great-circle distance between two GPX points in metres (2D)."""
+    from math import asin, cos, radians, sin, sqrt
+    la1, lo1, la2, lo2 = map(radians,
+                             (p1.latitude, p1.longitude,
+                              p2.latitude, p2.longitude))
+    dla, dlo = la2 - la1, lo2 - lo1
+    a = sin(dla / 2) ** 2 + cos(la1) * cos(la2) * sin(dlo / 2) ** 2
+    return 2 * R_EARTH_M * asin(sqrt(a))
+
+
+def max_speed_with_point(points):
+    """Gpxpy-style top speed (95th percentile of per-segment speeds, with
+    outlier distances filtered) plus the [lat, lon] where it happened.
+
+    Gpxpy's max_speed is an extreme-tolerant statistic, not the raw maximum
+    between two GPS fixes, so this replicates it instead of chasing jitter.
+    Returns (speed_kmh, [lat, lon]) of the midpoint of the fastest segment.
+    """
+    import math
+    segments = []
+    for p1, p2 in zip(points, points[1:]):
+        if p1.time is None or p2.time is None:
+            continue
+        secs = (p2.time - p1.time).total_seconds()
+        if secs <= 0:
+            continue
+        d = haversine_m(p1, p2)
+        if d is None or d <= 0:
+            continue
+        speed_kmh = d / secs * 3.6
+        if speed_kmh <= STOPPED_KMH:
+            continue
+        segments.append((speed_kmh, d, p1, p2))
+    if not segments:
+        return None, None
+
+    size = len(segments)
+    distances = [s[1] for s in segments]
+    avg_d = sum(distances) / size
+    sd = math.sqrt(sum((d - avg_d) ** 2 for d in distances) / size)
+    filtered = [s for s in segments if abs(s[1] - avg_d) <= sd * 1.5]
+    if not filtered:
+        return None, None
+    speeds = sorted(s[0] for s in filtered)
+    index = int(len(speeds) * (1 - IGNORE_TOP_SPEED_PERCENTILES))
+    if index >= len(speeds):
+        index = -1
+    top = speeds[index]
+    for speed_kmh, d, p1, p2 in filtered:
+        if speed_kmh == top:
+            return top, [(p1.latitude + p2.latitude) / 2,
+                         (p1.longitude + p2.longitude) / 2]
+    return top, None
 
 
 def elevation_gain(points, win=15, min_delta=0.25, min_dx=2.0):
@@ -99,7 +158,7 @@ def ride_from_file(fp):
     moving = gpx.get_moving_data()
     moving_time_s = moving.moving_time
     avg_speed_kmh = (distance_km / moving_time_s * 3600.0) if moving_time_s else None
-    max_speed_kmh = (moving.max_speed * 3.6) if moving.max_speed else None
+    max_speed_kmh, max_speed_point = max_speed_with_point(pts)
     pace_min_km = (moving_time_s / 60.0 / distance_km) if (moving_time_s and distance_km) else None
 
     trace = [[round(p.latitude, 6), round(p.longitude, 6)]
@@ -112,6 +171,7 @@ def ride_from_file(fp):
         "moving_time_s": int(moving_time_s),
         "avg_speed_kmh": round(avg_speed_kmh, 1) if avg_speed_kmh else None,
         "max_speed_kmh": round(max_speed_kmh, 1) if max_speed_kmh else None,
+        "max_speed_point": max_speed_point,
         "pace_min_km": round(pace_min_km, 1) if pace_min_km else None,
         "elevation_gain_m": round(elevation_gain(pts), 1),
         "trace": trace,

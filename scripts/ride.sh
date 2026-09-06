@@ -1,12 +1,9 @@
 #!/bin/bash
 # Usage: ./ride.sh "saturday morning ride"
+# Drop new .gpx files into GPX_OUT/, commit, and push. CI rebuilds the site.
 set -e
 cd ~/11blog/eleventy-garden
-git -C cycling_page pull --rebase
-git -C cycling_page add .
-git -C cycling_page commit -m "${1:-ride: $(date +%Y-%m-%d)}"
-git -C cycling_page push
-git add cycling_page
-git commit -m "bump cycling_page"
+git add GPX_OUT _data/rides.json _data/everystreet.json
+git commit -m "${1:-ride: $(date +%Y-%m-%d)}"
 git push
 echo "done — CI is building your site"

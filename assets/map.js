@@ -46,10 +46,12 @@
   var MISSING_COLOR = "#e8442a";
   var RIDDEN_COLOR = "#0f9d58";
   var GPX_COLOR = "#7c3aed";
+  var COMBINED_COLOR = "#22d3ee";
 
   /* Street layer visibility state — OFF by default. Only rendered when the
      matching layer-control checkbox is toggled on. */
-  var layerVis = { "missing-streets": false, "ridden-streets": false, "gpx-routes": true };
+  var layerVis = { "missing-streets": false, "ridden-streets": false, "gpx-routes": true, "rides-combined": false };
+  var filteredYear = "all";
 
   var map,
     selectedRideIdx = null,
@@ -58,7 +60,10 @@
     detailPanel,
     allRides = [],
     rideCoords = {},
-    rideLayerByIndex = {};
+    rideLayerByIndex = {},
+    gpxToggleInput = null,
+    yearSelect = null,
+    maxSpeedMarker = null;
 
   function init() {
     var container = document.getElementById("map");
@@ -177,17 +182,50 @@
     addStreetLayer("ridden-streets",
       "/everystreet/data/ridden-streets.geojson", RIDDEN_COLOR, 2.2,
       { visibility: layerVis["ridden-streets"] ? "visible" : "none" });
+    /* Everything you've ridden, merged into one overlay. */
+    addStreetLayer("rides-combined",
+      "/everystreet/data/rides-combined.geojson", COMBINED_COLOR, 1.2,
+      { visibility: layerVis["rides-combined"] ? "visible" : "none", opacity: 0.75 });
   }
 
-  /* Show/hide every GPX ride layer at once (used by the layer-control toggle). */
-  function setRideLayersVisibility(show) {
+  /* Show/hide every GPX ride layer, honouring both the "My GPX routes"
+     toggle and the year dropdown in the layer control. */
+  function applyRideVisibility() {
     Object.keys(rideLayerByIndex).forEach(function (k) {
+      var ride = allRides[parseInt(k, 10)];
+      var inYear = filteredYear === "all" || (ride && ride.date &&
+        ride.date.slice(0, 4) === filteredYear);
+      var show = layerVis["gpx-routes"] && inYear;
       ["ride-" + k, "ride-bg-" + k].forEach(function (id) {
         if (map.getLayer(id)) {
           map.setLayoutProperty(id, "visibility", show ? "visible" : "none");
         }
       });
     });
+  }
+
+  /* Make sure a ride we're asked to focus on can actually be seen: turn on
+     the GPX layer and drop any year filter that would hide it. */
+  function ensureRideVisible(ride) {
+    if (!layerVis["gpx-routes"]) {
+      layerVis["gpx-routes"] = true;
+      if (gpxToggleInput) gpxToggleInput.checked = true;
+      applyRideVisibility();
+    }
+    var y = ride && ride.date ? ride.date.slice(0, 4) : null;
+    if (y && filteredYear !== "all" && filteredYear !== y) {
+      filteredYear = y;
+      if (yearSelect) yearSelect.value = y;
+      applyRideVisibility();
+    }
+  }
+
+  function allYears() {
+    var years = {};
+    allRides.forEach(function (r) {
+      if (r && r.date) years[r.date.slice(0, 4)] = true;
+    });
+    return Object.keys(years).sort().reverse();
   }
 
   function addStreetLayer(id, url, color, width, opts) {
@@ -281,7 +319,7 @@
     });
 
     addRideInteraction();
-    if (!layerVis["gpx-routes"]) setRideLayersVisibility(false);
+    applyRideVisibility();
   }
 
   /* ── Ride click interaction ──────────────────────────────── */
@@ -308,8 +346,10 @@
     });
 
     /* Hover: emphasise the ride under the cursor and show a pointer so it is
-       obvious the trace can be clicked. */
+       obvious the trace can be clicked. Skipped while a single ride is
+       selected — only meaningful in "all rides" mode. */
     map.on("mouseenter", rideLayerIds, function (e) {
+      if (selectedRideIdx !== null) return;
       if (!e.features || !e.features.length) return;
       var k = e.features[0].properties.idx;
       if (typeof k === "string") k = parseInt(k, 10);
@@ -427,6 +467,7 @@
     map.fitBounds(bounds, { padding: 80, maxZoom: 15, duration: 800 });
 
     showRideDetail(ride, idx);
+    showMaxSpeedMarker(ride);
   }
 
   function deselectRide() {
@@ -441,6 +482,7 @@
     }
     selectedRideIdx = null;
     hideRideDetail();
+    clearMaxSpeedMarker();
     showAllRides();
   }
 
@@ -462,6 +504,7 @@
     var dist = ride.distance_km != null ? ride.distance_km.toFixed(1) : "—";
     var elev = ride.elevation_gain_m != null ? Math.round(ride.elevation_gain_m) : "—";
     var speed = ride.avg_speed_kmh != null ? ride.avg_speed_kmh.toFixed(1) : "—";
+    var maxSpeed = ride.max_speed_kmh != null ? ride.max_speed_kmh.toFixed(1) : "—";
     var time = formatTime(ride.moving_time_s);
     detailPanel.innerHTML =
       '<div class="ride-detail-header">' +
@@ -471,9 +514,10 @@
       "</div>" +
       '<div class="ride-detail-stats">' +
         '<div><span class="rd-label">Distance</span><span class="rd-value">' + dist + " km</span></div>" +
-        '<div><span class="rd-label">Elevation</span><span class="rd-value">' + elev + " m</span></div>" +
+        '<div><span class="rd-label">Elev gain</span><span class="rd-value">' + elev + " m</span></div>" +
         '<div><span class="rd-label">Avg speed</span><span class="rd-value">' + speed + " km/h</span></div>" +
         '<div><span class="rd-label">Time</span><span class="rd-value">' + time + "</span></div>" +
+        '<div><span class="rd-label">Max speed</span><span class="rd-value">' + maxSpeed + " km/h</span></div>" +
       "</div>" +
       '<button class="ride-detail-showall" type="button">Show all rides</button>';
     detailPanel.classList.add("visible");
@@ -485,6 +529,34 @@
     if (detailPanel) detailPanel.classList.remove("visible");
   }
 
+  /* ── Top-speed marker ────────────────────────────────────── */
+
+  function showMaxSpeedMarker(ride) {
+    clearMaxSpeedMarker();
+    if (!ride || ride.max_speed_kmh == null ||
+        !ride.max_speed_point || ride.max_speed_point.length < 2) return;
+    var el = document.createElement("div");
+    el.className = "ride-maxspeed-marker";
+    el.title = "Top speed: " + ride.max_speed_kmh.toFixed(1) + " km/h";
+    var popup = new maplibregl.Popup({ closeButton: false, offset: [0, -16], className: "ride-maxspeed-popup" })
+      .setHTML(
+        '<div style="font:13px/1.4 sans-serif;padding:2px 8px">' +
+          '<strong>' + ride.max_speed_kmh.toFixed(1) + " km/h</strong>" +
+          '<span style="color:#555"> top speed</span>' +
+        "</div>"
+      );
+    maxSpeedMarker = new maplibregl.Marker({ element: el, anchor: "bottom" })
+      .setLngLat([ride.max_speed_point[1], ride.max_speed_point[0]])
+      .setPopup(popup)
+      .addTo(map);
+    popup.addTo(map);
+  }
+
+  function clearMaxSpeedMarker() {
+    if (maxSpeedMarker) maxSpeedMarker.remove();
+    maxSpeedMarker = null;
+  }
+
   /* ── External entry point (used by table/heatmap clicks) ── */
 
   function selectRideByIndex(idx, opts) {
@@ -492,7 +564,9 @@
     if (!map || !allRides.length) return;
     idx = parseInt(idx, 10);
     if (isNaN(idx) || !allRides[idx] || !rideCoords[idx]) return;
-    selectRide(idx, allRides[idx]);
+    var ride = allRides[idx];
+    ensureRideVisible(ride);
+    selectRide(idx, ride);
     if (opts && opts.scrollToMap) {
       var el = document.getElementById("map");
       if (el && el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -535,6 +609,7 @@
       { key: "missing-streets", label: "Missing streets", color: MISSING_COLOR },
       { key: "ridden-streets", label: "Ridden streets", color: RIDDEN_COLOR },
       { key: "gpx-routes", label: "My GPX routes", color: GPX_COLOR },
+      { key: "rides-combined", label: "Combined routes", color: COMBINED_COLOR },
     ].forEach(function (item) {
       var label = document.createElement("label");
       label.className = "lc-item";
@@ -542,11 +617,12 @@
       input.type = "checkbox";
       input.value = item.key;
       input.checked = layerVis[item.key];
+      if (item.key === "gpx-routes") gpxToggleInput = input;
 
       input.addEventListener("change", function () {
         layerVis[item.key] = input.checked;
         if (item.key === "gpx-routes") {
-          setRideLayersVisibility(input.checked);
+          applyRideVisibility();
         } else if (map.getLayer(item.key)) {
           map.setLayoutProperty(item.key, "visibility", input.checked ? "visible" : "none");
         }
@@ -562,6 +638,38 @@
       label.appendChild(document.createTextNode(" " + item.label));
       ctrl.appendChild(label);
     });
+
+    /* Year dropdown — shows only rides from the chosen year on the map. */
+    var yearHeading = document.createElement("div");
+    yearHeading.className = "lc-heading";
+    yearHeading.textContent = "Year";
+    ctrl.appendChild(yearHeading);
+
+    yearSelect = document.createElement("select");
+    yearSelect.className = "lc-select";
+    var years = allYears();
+    var anyOption = document.createElement("option");
+    anyOption.value = "all";
+    anyOption.textContent = "All years";
+    anyOption.selected = true;
+    yearSelect.appendChild(anyOption);
+    years.forEach(function (y) {
+      var option = document.createElement("option");
+      option.value = y;
+      option.textContent = y;
+      yearSelect.appendChild(option);
+    });
+    yearSelect.addEventListener("change", function () {
+      filteredYear = yearSelect.value;
+      applyRideVisibility();
+      /* A selected ride from another year would be hidden — drop it. */
+      if (selectedRideIdx !== null) {
+        var ride = allRides[selectedRideIdx];
+        var ry = ride && ride.date ? ride.date.slice(0, 4) : null;
+        if (filteredYear !== "all" && ry !== filteredYear) deselectRide();
+      }
+    });
+    ctrl.appendChild(yearSelect);
 
     map.getContainer().appendChild(ctrl);
   }

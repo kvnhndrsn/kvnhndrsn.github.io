@@ -296,6 +296,37 @@ def export_geojson(edges_m, routes_wgs, bn_dir):
         log(f"Wrote {fp.name}: {len(r_feats)} features")
 
 
+def export_rides_combined(rides_wgs, bn_dir, simplify_m=8.0):
+    """Merge every ride trace into one overlay — every street touched,
+    stroked once — written to everystreet/data/rides-combined.geojson.
+
+    Emitted as a single MultiLineString feature so MapLibre renders the
+    whole web as one layer instead of thousands of tiny line features.
+    """
+    data_dir = bn_dir / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    if rides_wgs.empty:
+        return
+    log("Merging ride tracks into one combined overlay...")
+    crs = ox.projection.project_gdf(rides_wgs.head(1)).crs
+    rides_m = rides_wgs.to_crs(crs)
+    geoms = [g.simplify(simplify_m) for g in rides_m.geometry]
+    merged = union_all(geoms)
+    parts = list(getattr(merged, "geoms", [merged]))
+    lines = [[[round(x, 5), round(y, 5)] for x, y in part.coords]
+             for part in parts]
+    fp = data_dir / "rides-combined.geojson"
+    fp.write_text(json.dumps({
+        "type": "FeatureCollection",
+        "features": [{
+            "type": "Feature",
+            "properties": {"name": "combined"},
+            "geometry": {"type": "MultiLineString", "coordinates": lines},
+        }],
+    }))
+    log(f"Wrote {fp.name}: {len(lines):,} line parts ({fp.stat().st_size/1e6:.1f} MB)")
+
+
 def export_gpkg(edges_m, rides_wgs, fp):
     fp.parent.mkdir(parents=True, exist_ok=True)
     if fp.exists():
@@ -602,6 +633,7 @@ def main():
             log(f"Wrote {len(routes_wgs)} route GPX files -> {rdir}")
 
     export_geojson(edges_m, routes_wgs, bn_dir)
+    export_rides_combined(rides, bn_dir)
     (bn_dir / "data" / "stats.json").write_text(json.dumps(stats, indent=2))
 
     make_map(edges_m, rides, stats, routes_wgs, out_fp=bn_dir / "map.html")
