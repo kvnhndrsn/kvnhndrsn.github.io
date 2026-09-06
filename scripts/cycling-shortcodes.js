@@ -40,6 +40,80 @@ function formatTime(seconds) {
   return `${mins}min`;
 }
 
+const ROUTE_PALETTE = [
+  "#7c3aed", "#2563eb", "#0891b2", "#059669", "#d97706",
+  "#dc2626", "#db2777", "#9333ea", "#4f46e5", "#0d9488",
+  "#16a34a", "#ca8a04", "#e11d48", "#c026d3", "#6d28d9",
+];
+
+function simplifyTrace(pts, max) {
+  if (pts.length <= max) return pts;
+  const step = (pts.length - 1) / (max - 1);
+  const out = [];
+  for (let i = 0; i < max; i++) out.push(pts[Math.floor(i * step)]);
+  return out;
+}
+
+/* Big "every ride in one web" graphic for the #everystreet header. Each ride
+   is its own colour, all normalised to a shared bounding box and drawn as a
+   streak with round caps, so the whole city's coverage reads at a glance. */
+function allRoutesIcon(rides) {
+  const MAX = 140;
+  const PAD = 0.06;
+  const valid = (rides || []).filter(
+    (r) => r && Array.isArray(r.trace) && r.trace.length >= 2
+  );
+  if (!valid.length) return "";
+
+  const traces = valid.map((r) => simplifyTrace(r.trace, MAX));
+  let minLat = Infinity, maxLat = -Infinity, minLon = Infinity, maxLon = -Infinity;
+  traces.forEach((t) =>
+    t.forEach((p) => {
+      minLat = Math.min(minLat, p[0]);
+      maxLat = Math.max(maxLat, p[0]);
+      minLon = Math.min(minLon, p[1]);
+      maxLon = Math.max(maxLon, p[1]);
+    })
+  );
+
+  const latSpan = Math.max(maxLat - minLat, 1e-6);
+  const lonSpan = Math.max(maxLon - minLon, 1e-6);
+  const lat0 = minLat - latSpan * PAD, lat1 = maxLat + latSpan * PAD;
+  const lon0 = minLon - lonSpan * PAD, lon1 = maxLon + lonSpan * PAD;
+  const dLat = lat1 - lat0, dLon = lon1 - lon0;
+
+  /* Keep the real-world aspect ratio (lon shrinks with cos(lat)). */
+  const cosMid = Math.max(Math.cos(((lat0 + lat1) / 2) * Math.PI / 180), 0.3);
+  const W = dLon * cosMid;
+  const H = dLat;
+  const s = 1000 / Math.max(W, H);
+  const vw = W * s, vh = H * s;
+
+  const toXY = (lat, lon) => [
+    (((lon - lon0) / dLon) * W) * s,
+    vh - (((lat - lat0) / dLat) * H) * s,
+  ];
+
+  const paths = traces
+    .map((t, i) => {
+      const xy = t.map((p) => toXY(p[0], p[1]));
+      const d = xy
+        .map(([x, y], j) => (j === 0 ? "M" : "L") + x.toFixed(1) + " " + y.toFixed(1))
+        .join("");
+      const color = ROUTE_PALETTE[i % ROUTE_PALETTE.length];
+      return `<path d="${d}" stroke="${color}" />`;
+    })
+    .join("");
+
+  return (
+    `<svg class="routes-banner" viewBox="0 0 ${vw.toFixed(1)} ${vh.toFixed(1)}"` +
+    ` preserveAspectRatio="xMidYMid meet" role="img"` +
+    ` aria-label="${valid.length} rides across Regina, Saskatchewan, all traced routes">` +
+    paths +
+    `</svg>`
+  );
+}
+
 function rideTable(rides) {
   const cols = [
     ["Date", "date"],
@@ -205,6 +279,7 @@ function ridesData(rides) {
 
 module.exports = {
   rideTraceIcon,
+  allRoutesIcon,
   rideTable,
   rideSummary,
   yearFilter,
