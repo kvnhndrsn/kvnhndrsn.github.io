@@ -46,12 +46,16 @@
   var MISSING_COLOR = "#e8442a";
   var RIDDEN_COLOR = "#0f9d58";
   var GPX_COLOR = "#7c3aed";
-  var COMBINED_COLOR = "#22d3ee";
+  var TRAIL_COLOR = "#facc15";
 
   /* Street layer visibility state — OFF by default. Only rendered when the
      matching layer-control checkbox is toggled on. */
-  var layerVis = { "missing-streets": false, "ridden-streets": false, "gpx-routes": true, "rides-combined": false };
+  var layerVis = { "missing-streets": false, "ridden-streets": false, "gpx-routes": true };
   var filteredYear = "all";
+  /* Surface filter state (applies to every street layer): show paved
+     streets, non-vehicular trails, or both. */
+  var showStreets = true;
+  var showTrails = true;
 
   var map,
     selectedRideIdx = null,
@@ -154,6 +158,7 @@
   function bindOverlays() {
     bindStreetLayers();
     bindRideLayers();
+    applyTrailFilter();
     /* Restore the selected ride's emphasis after a style swap. */
     if (selectedRideIdx !== null && rideCoords[selectedRideIdx]) {
       var idx = selectedRideIdx;
@@ -181,10 +186,6 @@
     addStreetLayer("ridden-streets",
       "/everystreet/data/ridden-streets.geojson", RIDDEN_COLOR, 2.2,
       { visibility: layerVis["ridden-streets"] ? "visible" : "none" });
-    /* Everything you've ridden, merged into one overlay. */
-    addStreetLayer("rides-combined",
-      "/everystreet/data/rides-combined.geojson", COMBINED_COLOR, 1.8,
-      { visibility: layerVis["rides-combined"] ? "visible" : "none", opacity: 0.85 });
   }
 
   /* Show/hide every GPX ride layer, honouring both the "My GPX routes"
@@ -241,11 +242,32 @@
         visibility: opts.visibility || "visible",
       },
       paint: {
-        "line-color": color,
-        "line-width": width,
+        /* Trails render in TRAIL_COLOR and slightly thinner than the
+           paved-street colour, per feature. */
+        "line-color": ["case", ["==", ["get", "trail"], true], TRAIL_COLOR, color],
+        "line-width": ["case", ["==", ["get", "trail"], true], width - 0.5, width],
         "line-opacity": opts.opacity != null ? opts.opacity : 0.95,
         ...(opts.dash ? { "line-dasharray": opts.dash } : {}),
       },
+    });
+  }
+
+  /* Show/hide paved streets vs trails inside every street layer, based on
+     the per-feature `trail` flag applied in the map data. */
+  function applyTrailFilter() {
+    ["missing-streets", "ridden-streets"].forEach(function (id) {
+      if (!map.getLayer(id)) return;
+      var filter;
+      if (showStreets && showTrails) {
+        filter = null;
+      } else if (showStreets) {
+        filter = ["==", ["get", "trail"], false];
+      } else if (showTrails) {
+        filter = ["==", ["get", "trail"], true];
+      } else {
+        filter = ["==", ["get", "trail"], "__none__"];
+      }
+      map.setFilter(id, filter);
     });
   }
 
@@ -377,13 +399,15 @@
 
     map.on("click", "missing-streets", function (e) {
       if (!e.features || !e.features.length) return;
-      var name = e.features[0].properties.name || "(unnamed)";
+      var f = e.features[0];
+      var name = f.properties.name || "(unnamed)";
+      var kind = f.properties.trail ? "trail" : "street";
       new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(
           '<div style="font:13px/1.4 sans-serif;padding:2px 0">' +
             "<strong>" + escHtml(name) + "</strong>" +
-            '<span style="color:#888;margin-left:6px">not ridden</span>' +
+            '<span style="color:#888;margin-left:6px">not ridden · ' + kind + "</span>" +
             "</div>"
         )
         .addTo(map);
@@ -391,13 +415,15 @@
 
     map.on("click", "ridden-streets", function (e) {
       if (!e.features || !e.features.length) return;
-      var name = e.features[0].properties.name || "(unnamed)";
+      var f = e.features[0];
+      var name = f.properties.name || "(unnamed)";
+      var kind = f.properties.trail ? "trail" : "street";
       new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(
           '<div style="font:13px/1.4 sans-serif;padding:2px 0">' +
             "<strong>" + escHtml(name) + "</strong>" +
-            '<span style="color:#0f9d58;margin-left:6px">ridden</span>' +
+            '<span style="color:#0f9d58;margin-left:6px">ridden · ' + kind + "</span>" +
             "</div>"
         )
         .addTo(map);
@@ -405,19 +431,23 @@
 
     map.on("mouseenter", "missing-streets", function () {
       map.getCanvas().style.cursor = "pointer";
-      map.setPaintProperty("missing-streets", "line-width", 4);
+      map.setPaintProperty("missing-streets", "line-width",
+        ["case", ["==", ["get", "trail"], true], 1.7, 4]);
     });
     map.on("mouseleave", "missing-streets", function () {
       map.getCanvas().style.cursor = "";
-      map.setPaintProperty("missing-streets", "line-width", 2.2);
+      map.setPaintProperty("missing-streets", "line-width",
+        ["case", ["==", ["get", "trail"], true], 1.7, 2.2]);
     });
     map.on("mouseenter", "ridden-streets", function () {
       map.getCanvas().style.cursor = "pointer";
-      map.setPaintProperty("ridden-streets", "line-width", 4);
+      map.setPaintProperty("ridden-streets", "line-width",
+        ["case", ["==", ["get", "trail"], true], 1.7, 4]);
     });
     map.on("mouseleave", "ridden-streets", function () {
       map.getCanvas().style.cursor = "";
-      map.setPaintProperty("ridden-streets", "line-width", 2.2);
+      map.setPaintProperty("ridden-streets", "line-width",
+        ["case", ["==", ["get", "trail"], true], 1.7, 2.2]);
     });
   }
 
@@ -572,11 +602,44 @@
     layersHeading.textContent = "Layers";
     ctrl.appendChild(layersHeading);
 
+    /* Surface filter — applies to every layer below (works independently of
+       the per-layer checkboxes). */
+    var surfaceHeading = document.createElement("div");
+    surfaceHeading.className = "lc-heading lc-sub";
+    surfaceHeading.textContent = "Surface";
+    ctrl.appendChild(surfaceHeading);
+
+    var surfaceToggles = [
+      { key: "showStreets", label: "Paved streets", color: "#94a3b8" },
+      { key: "showTrails", label: "Trails", color: TRAIL_COLOR },
+    ];
+    surfaceToggles.forEach(function (item) {
+      var label = document.createElement("label");
+      label.className = "lc-item";
+      var input = document.createElement("input");
+      input.type = "checkbox";
+      input.checked = item.key === "showStreets" ? showStreets : showTrails;
+      input.addEventListener("change", function () {
+        if (item.key === "showStreets") {
+          showStreets = input.checked;
+        } else {
+          showTrails = input.checked;
+        }
+        applyTrailFilter();
+      });
+      label.appendChild(input);
+      var swatch = document.createElement("span");
+      swatch.className = "lc-swatch";
+      swatch.style.background = item.color;
+      label.appendChild(swatch);
+      label.appendChild(document.createTextNode(" " + item.label));
+      ctrl.appendChild(label);
+    });
+
     [
       { key: "missing-streets", label: "Missing streets", color: MISSING_COLOR },
       { key: "ridden-streets", label: "Ridden streets", color: RIDDEN_COLOR },
       { key: "gpx-routes", label: "My GPX routes", color: GPX_COLOR },
-      { key: "rides-combined", label: "Combined routes", color: COMBINED_COLOR },
     ].forEach(function (item) {
       var label = document.createElement("label");
       label.className = "lc-item";

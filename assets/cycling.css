@@ -325,6 +325,12 @@
   margin-top: 0;
 }
 
+.map-layer-control .lc-heading.lc-sub {
+  margin-top: 8px;
+  opacity: 0.45;
+  font-size: 0.68rem;
+}
+
 .map-layer-control .lc-item {
   display: flex;
   align-items: center;

@@ -27,6 +27,15 @@ DEFAULT_PLACE = "Regina, Saskatchewan, Canada"
 DEFAULT_GPX_DIR = HOME / "11blog/eleventy-garden/cycling_page/GPX_OUT"
 WORKDIR = HOME / "everystreet"
 
+# OSM highway tags that count as non-vehicular "trails" (foot/cycle paths,
+# unpaved tracks, bridleways). Used to tint & filter streets vs trails.
+TRAIL_HIGHWAYS = {"footway", "path", "track", "cycleway", "bridleway", "steps"}
+
+
+def is_trail(highway):
+    tags = highway if isinstance(highway, list) else [highway]
+    return bool(tags) and any(t in TRAIL_HIGHWAYS for t in tags)
+
 
 def blog_note_dir(blog_dir):
     return blog_dir / "everystreet"
@@ -265,7 +274,8 @@ def export_geojson(edges_m, routes_wgs, bn_dir):
         coords = [[round(x, 5), round(y, 5)] for x, y in row.geometry.coords]
         miss_feats.append({
             "type": "Feature",
-            "properties": {"name": clean_name(row.name), "highway": row.highway},
+            "properties": {"name": clean_name(row.name), "highway": row.highway,
+                           "trail": is_trail(row.highway)},
             "geometry": {"type": "LineString", "coordinates": coords},
         })
     ride_feats = []
@@ -273,7 +283,8 @@ def export_geojson(edges_m, routes_wgs, bn_dir):
         coords = [[round(x, 5), round(y, 5)] for x, y in row.geometry.coords]
         ride_feats.append({
             "type": "Feature",
-            "properties": {"name": clean_name(row.name), "highway": row.highway},
+            "properties": {"name": clean_name(row.name), "highway": row.highway,
+                           "trail": is_trail(row.highway)},
             "geometry": {"type": "LineString", "coordinates": coords},
         })
     for name, feats in [("missing-streets", miss_feats), ("ridden-streets", ride_feats)]:
@@ -294,40 +305,6 @@ def export_geojson(edges_m, routes_wgs, bn_dir):
         fp = data_dir / "planned-routes.geojson"
         fp.write_text(json.dumps({"type": "FeatureCollection", "features": r_feats}))
         log(f"Wrote {fp.name}: {len(r_feats)} features")
-
-
-def export_rides_combined(rides_wgs, bn_dir, simplify_m=8.0):
-    """Merge every ride trace into one overlay — every street touched,
-    stroked once — written to everystreet/data/rides-combined.geojson.
-
-    Emitted as a single MultiLineString feature so MapLibre renders the
-    whole web as one layer instead of thousands of tiny line features.
-    """
-    data_dir = bn_dir / "data"
-    data_dir.mkdir(parents=True, exist_ok=True)
-    if rides_wgs.empty:
-        return
-    log("Merging ride tracks into one combined overlay...")
-    crs = ox.projection.project_gdf(rides_wgs.head(1)).crs
-    rides_m = rides_wgs.to_crs(crs)
-    geoms = [g.simplify(simplify_m) for g in rides_m.geometry]
-    merged = union_all(geoms)
-    # The union is in metres; reproject back to lon/lat before exporting.
-    merged_wgs = (gpd.GeoDataFrame(geometry=list(getattr(merged, "geoms", [merged])),
-                                   crs=crs)
-                  .to_crs("EPSG:4326"))
-    lines = [[[round(x, 5), round(y, 5)] for x, y in g.coords]
-             for g in merged_wgs.geometry]
-    fp = data_dir / "rides-combined.geojson"
-    fp.write_text(json.dumps({
-        "type": "FeatureCollection",
-        "features": [{
-            "type": "Feature",
-            "properties": {"name": "combined"},
-            "geometry": {"type": "MultiLineString", "coordinates": lines},
-        }],
-    }))
-    log(f"Wrote {fp.name}: {len(lines):,} line parts ({fp.stat().st_size/1e6:.1f} MB)")
 
 
 def export_gpkg(edges_m, rides_wgs, fp):
@@ -636,7 +613,6 @@ def main():
             log(f"Wrote {len(routes_wgs)} route GPX files -> {rdir}")
 
     export_geojson(edges_m, routes_wgs, bn_dir)
-    export_rides_combined(rides, bn_dir)
     (bn_dir / "data" / "stats.json").write_text(json.dumps(stats, indent=2))
 
     make_map(edges_m, rides, stats, routes_wgs, out_fp=bn_dir / "map.html")
