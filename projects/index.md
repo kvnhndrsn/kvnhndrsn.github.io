@@ -4,7 +4,6 @@ title: Projects
 ---
 
 <style>
-
 :root{
             --bg-color: #000;
             --text-color: #fff;
@@ -107,6 +106,8 @@ title: Projects
   }
 }
 </style>
+
+<a href="https://kvnhndrsn.github.io/config/"><h2>Home Setup</h2></a>
 
 <div class="project-table">
 
