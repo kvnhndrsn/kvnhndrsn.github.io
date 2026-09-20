@@ -701,7 +701,9 @@
     });
     ctrl.appendChild(yearSelect);
 
-    map.getContainer().appendChild(ctrl);
+    var toolbar = document.getElementById("map-toolbar");
+    if (toolbar) toolbar.appendChild(ctrl);
+    else map.getContainer().appendChild(ctrl);
   }
 
   /* ── Detail panel ────────────────────────────────────────── */

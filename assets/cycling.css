@@ -294,41 +294,37 @@
   height: 480px;
 }
 
-/* Layer control (top-right, below nav) */
+/* Toolbar above the map — the layer control lives here so it never covers
+   the map itself. */
+.map-toolbar {
+  background: var(--bar-bg, rgba(10, 10, 10, 0.45));
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 12px;
+}
+
 .map-layer-control {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1000;
-  pointer-events: auto;
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-  padding: 8px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 20px;
   font: 13px/1.4 -apple-system, sans-serif;
-  color: #111;
-  min-width: 150px;
+  color: var(--text-color);
   user-select: none;
 }
 
 .map-layer-control .lc-heading {
+  display: flex;
+  align-items: center;
   font-weight: 700;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin: 6px 0 3px;
-  opacity: 0.7;
-}
-
-.map-layer-control .lc-heading:first-child {
-  margin-top: 0;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+  margin-right: -12px;
 }
 
 .map-layer-control .lc-heading.lc-sub {
-  margin-top: 8px;
   opacity: 0.45;
-  font-size: 0.68rem;
 }
 
 .map-layer-control .lc-item {
@@ -337,18 +333,18 @@
   gap: 6px;
   padding: 2px 0;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .map-layer-control .lc-item input {
   cursor: pointer;
-  accent-color: #111;
-  width: 16px;
-  height: 16px;
+  accent-color: var(--text-color, #111);
+  width: 14px;
+  height: 14px;
 }
 
 .map-layer-control .lc-item:hover {
-  background: rgba(0, 0, 0, 0.06);
-  border-radius: 4px;
+  opacity: 1;
 }
 
 .map-layer-control .lc-swatch {
@@ -356,17 +352,16 @@
   height: 14px;
   border-radius: 3px;
   flex: none;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .map-layer-control .lc-select {
-  width: 100%;
-  margin: 2px 0 6px;
-  padding: 4px 6px;
+  margin: 0;
+  padding: 4px 8px;
   font: 13px/1.4 -apple-system, sans-serif;
-  color: #111;
-  background: #fff;
-  border: 1px solid #ccc;
+  color: var(--text-color);
+  background: var(--bar-bg, rgba(10, 10, 10, 0.45));
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   cursor: pointer;
 }
