@@ -72,24 +72,28 @@ title: Projects
 }
 
 /* Right side (image) */
-.project-image {
-  flex: 0 0 250px;
-  max-width: 250px;
+.project-media {
+  flex: 0 0 280px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
 }
 
-.project-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.project-media a,
+.project-image {
   display: block;
+  width: 100%;
+  height: 210px;
+}
+
+.project-image {
+  object-fit: cover;
   transition: transform 0.3s ease;
 }
 
-.project-row:hover .project-image img {
+.project-row:hover .project-image {
   transform: scale(1.05);
 }
 
@@ -99,17 +103,33 @@ title: Projects
     flex-direction: column;
   }
 
-  .project-image {
-    max-width: 100%;
+  .project-media {
+    flex: 0 0 210px;
     width: 100%;
-    height: 200px;
+  }
+
+  .project-media a,
+  .project-image {
+    height: 100%;
   }
 }
 </style>
 
-<a href="https://kvnhndrsn.github.io/config/"><h2>Home Setup</h2></a>
-
 <div class="project-table">
+
+  <div class="project-row">
+    <div class="project-info">
+      <h3 class="project-title"><a href="https://kvnhndrsn.github.io/config/">Home Setup</a></h3>
+      <p class="programming-name"><strong>Kernel:</strong> 6.19.10-1-cachyos</p>
+      <p class="programming-name"><strong>WM:</strong> Hyprland</p>
+      <p class="programming-name"><strong>QuickShell:</strong> Noctalia</p>
+      <p class="programming-name"><strong>Packages:</strong> <a href="/config/packages/">1775</a></p>
+      <p class="programming-name"><strong><a href="https://codeberg.org/kvnhndrsn/dotfiles">Dotfiles</a></strong></p>
+    </div>
+    <div class="project-media">
+      <a href="https://kvnhndrsn.github.io/config/"><img class="project-image" src="/config/screenshot.gif" alt="Home setup"></a>
+    </div>
+  </div>
 
   <div class="project-row">
     <div class="project-info">
@@ -119,7 +139,7 @@ title: Projects
       <p>I vibe coded this to be a more versatile version of the python tool below</p>
       <p class="programming-name"><strong>Last Updated:</strong> 2026</p>
     </div>
-    <div class="project-image">
+    <div class="project-media">
       <a href="https://github.com/kvnhndrsn/kwpdf"><img class="project-image" src="/projects/pdf.webp" alt="PDF Highlighter"></a>
     </div>
   </div>
@@ -132,7 +152,9 @@ title: Projects
         <p>I wrote and use this for work but has been more or less replaced by the javascript tool above</p>
       <p class="programming-name"><strong>Last Updated:</strong> 2025</p>
     </div>
-      <img class="project-image" src="/projects/pdf_scan.webp" alt="PDF Highlighter">
+    <div class="project-media">
+      <a href="https://github.com/kvnhndrsn/pdf_scan"><img class="project-image" src="/projects/pdf_scan.webp" alt="PDF Keyword Highlighter"></a>
+    </div>
   </div>
   
 
@@ -143,7 +165,7 @@ title: Projects
       <p>Creates beautiful graphs of directories on your filesystem</p>
       <p class="programming-name"><strong>Last Updated:</strong> 2019</p>
     </div>
-    <div class="project-image">
+    <div class="project-media">
       <a href="https://github.com/kvnhndrsn/PFSG"><img class="project-image" src="/projects/sfdp.webp" alt="Graphs"></a>
     </div>
   </div>
@@ -155,7 +177,8 @@ title: Projects
       <p>  merge/stack multiple images horizontally or vertically to create a single image out of many. Annotates image with timestamp and renames image with current date for a simpler upload to server.</p>
       <p class="programming-name"><strong>Last Updated:</strong> 2024</p>
     </div>
-      <a href="https://github.com/kvnhndrsn/MagickStack"><img class="project-image" src="/projects/stack.webp" alt="Graphs"></a>
+    <div class="project-media">
+      <a href="https://github.com/kvnhndrsn/MagickStack"><img class="project-image" src="/projects/stack.webp" alt="MagickStack"></a>
     </div>
   </div>
   
