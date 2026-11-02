@@ -40,6 +40,7 @@ module.exports = function(eleventyConfig) {
     });
     
     eleventyConfig.addPassthroughCopy('assets');
+    eleventyConfig.addPassthroughCopy('games/*.js');
     eleventyConfig.addPassthroughCopy('everystreet/*.html');
     eleventyConfig.addPassthroughCopy('everystreet/data/');
     eleventyConfig.addPassthroughCopy('bicycles/*.jpg');
